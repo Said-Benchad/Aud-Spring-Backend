@@ -8,14 +8,16 @@ import java.util.Collection;
 @Entity
 @Getter
 @Setter
-@Data @AllArgsConstructor @NoArgsConstructor
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Piece {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idPiece;
+    private Long idPiece;
     private String nom;
     private String reference;
     private float PRIX;
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     private Collection<Voiture> voiture ;
 
 }

@@ -20,7 +20,7 @@ public class AppUser {
     private String password;
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<AppRole> appRole = new ArrayList<>();
-    @OneToMany(mappedBy = "proprietaire" , fetch = FetchType.LAZY)
+   @OneToMany(mappedBy = "proprietaire" , fetch = FetchType.LAZY)
     private Collection<Voiture> voiture ;
     @OneToMany(mappedBy = "client",fetch = FetchType.LAZY)
     @Column(name = "CDEVIS", updatable = false, nullable = false)

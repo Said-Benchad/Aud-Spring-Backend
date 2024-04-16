@@ -1,27 +1,26 @@
 package org.sid.secservice.sec.entities;
 
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.UUID;
+
 @Entity
 @Getter
 @Setter
-@Data @AllArgsConstructor @NoArgsConstructor
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Moteur {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "codeMoteur", updatable = false, nullable = false)
-    private String codeMoteur ;
+    private UUID codeMoteur ;
     private String cylindee ;
     private String puissance;
     private String typeMotorisation;
     private String boitaVitesse;
-    @OneToOne
+    @OneToOne(mappedBy = "moteur")
     private Voiture voiture;
 
 }

@@ -8,7 +8,9 @@ import java.util.Collection;
 @Setter
 @Getter
 @Entity
-@Data @NoArgsConstructor @AllArgsConstructor
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Voiture {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,22 +19,18 @@ public class Voiture {
     private Integer anneeFab;
     private String modele;
     private String finition;
-    @OneToMany(mappedBy = "voiture" , fetch = FetchType.LAZY)
-    private Collection<Devis>devis ;
-    @ManyToOne
-    private AppUser proprietaire; // a discuter had lblan
-    @OneToMany(mappedBy = "voiture" , fetch = FetchType.LAZY)
-    private Collection<PrixService> prixService;
-    @ManyToMany(fetch = FetchType.LAZY)
-    private Collection<Packages> packages;
     @OneToOne
     private Moteur moteur;
-    @ManyToMany(mappedBy = "voiture" , fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "voiture" , fetch = FetchType.LAZY)
+    private Collection<Devis> devis ;
+    @ManyToOne
+    private AppUser proprietaire; // a discuter had lblan
+    @ManyToMany(mappedBy = "voiture",fetch = FetchType.LAZY)
     private Collection<Piece> pieces;
+    @OneToMany(mappedBy = "voit" , fetch = FetchType.LAZY)
+    private Collection<PrixServices> prixService;
+    @ManyToMany(fetch = FetchType.LAZY)
+    private Collection<Packages> packages;
 
 
 }
-
-
-
-
