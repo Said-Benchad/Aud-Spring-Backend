@@ -9,6 +9,8 @@ import lombok.Data;
 import org.sid.secservice.sec.JWTUtil;
 import org.sid.secservice.sec.entities.AppRole;
 import org.sid.secservice.sec.entities.AppUser;
+import org.sid.secservice.sec.entities.Devis;
+import org.sid.secservice.sec.entities.Historique;
 import org.sid.secservice.sec.services.AccountService;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,19 +39,29 @@ public class AccountRestController {
     public List<AppUser> appUsers(){
     return accountService.listeUser();
     }
+
     @PostMapping(path = "/users")
     @PostAuthorize("hasAuthority('ADMIN')")
     public AppUser saveUser( @RequestBody AppUser appUser){
         return accountService.addNewUser(appUser);
     }
+
+    @PostMapping(path = "/upUsers")
+    @PostAuthorize("hasAuthority('ADMIN')")
+    public AppUser updateuser(@RequestBody Long id , AppUser user){
+        return accountService.updateUser(id , user);
+    }
+
     @PostMapping(path = "/roles")
     public AppRole saveRole(@RequestBody AppRole appRole){
         return accountService.addNewRole(appRole);
     }
+
     @PostMapping(path = "/addRoleToUser")
     public void addRoleToUser ( @RequestBody RoleUserForm roleUserForm){
          accountService.addRoletoUser(roleUserForm.getUsername(),roleUserForm.getRoleName());
     }
+
     @GetMapping(path = "/refreshToken")
     public void refreshToken(HttpServletRequest request , HttpServletResponse response) throws Exception{
         String authToken = request.getHeader(JWTUtil.AUTH_HEADER);
@@ -81,9 +93,22 @@ public class AccountRestController {
             throw new RuntimeException("Refresh token required");
         }
     }
+
     @GetMapping(path = "/profile")
     public AppUser profile(Principal principal){
         return accountService.LoadUserByUsername(principal.getName());
+    }
+
+    @GetMapping(path = "/historique")
+    public List<Historique> historique(Principal principal){
+        AppUser user = accountService.LoadUserByUsername(principal.getName());
+        List<Devis> devisList =accountService.listeDevisByclient(user);
+        List<Historique> historiques = new ArrayList<>();
+        devisList.forEach(e->{
+            Historique htr = new Historique(e.getTitre_devis(),e.getDateCreation());
+            historiques.add(htr);
+        });
+        return historiques;
     }
 }
 @Data

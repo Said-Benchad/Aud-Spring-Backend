@@ -18,6 +18,7 @@ public class Devis {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "codeDevis", updatable = false, nullable = false)
     private UUID code_devis ;
+    private String titre_devis;
     @ManyToOne
     private AppUser client;
     @OneToOne
@@ -26,9 +27,10 @@ public class Devis {
     private Voiture voiture;
     @ManyToMany( fetch = FetchType.LAZY)
     List<Employe> employes ;
-    //private TypeService typeService;
     private String description;
+    @Temporal(TemporalType.TIMESTAMP)
     private Date dateCreation;
+    @Temporal(TemporalType.TIMESTAMP)
     private Date dateModif ;
 
 }

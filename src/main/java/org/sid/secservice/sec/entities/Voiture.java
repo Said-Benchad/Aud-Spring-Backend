@@ -15,7 +15,6 @@ public class Voiture {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(unique = true)
-    private String numChassis ;
     private Integer anneeFab;
     private String modele;
     private String finition;
