@@ -3,6 +3,7 @@ package org.sid.secservice.sec.services;
 import org.sid.secservice.sec.entities.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface AccountService {
@@ -27,28 +28,40 @@ public interface AccountService {
     PrixServices getPrixservices(Voiture voiture , Services services);
     Piece addNewPiece(Piece piece);
     Piece updatePiece(Long id , Piece piece);
-    Piece deletePiece(Piece piece);
+    void deletePiece(Piece piece);
     MainOeuvre addNewMainOeuvre( MainOeuvre mainOeuvre);
     MainOeuvre updateMainOeuvre (Long id , MainOeuvre mainOeuvre);
-    MainOeuvre deleteMainOeuvre( MainOeuvre mainOeuvre);
+    void deleteMainOeuvre(MainOeuvre mainOeuvre);
     Packages addNewPack (Packages packages);
     Packages updatePack(UUID id ,Packages packages);
-    Packages deletePack (Packages packages);
+    void deletePack (Packages packages);
     Moteur addNewMoteur (Moteur moteur);
     Moteur updateMoteur(UUID id , Moteur moteur);
-    Moteur deleteMoteur (Moteur moteur);
+    void deleteMoteur (Moteur moteur);
     Employe addNewEmploye ( Employe employe);
     Employe updateEmploye ( Long id , Employe eploye);
-    Employe deleteEmploye ( Employe employe);
+    void deleteEmploye (Employe employe);
+    void deleteUser (AppUser appUser );
+
+    Optional<AppUser> user(Long id);
 
 
-    void addUsertoVoiture(AppUser appUser , Voiture voiture);
+    void addVoitureToUser(AppUser appUser , Voiture voiture);
     void addMoteurToVoiture(Moteur moteur , Voiture voiture);
     void addVoitureToDevis(Voiture voiture , Devis devis);
-    void addVoitureToPack ( Voiture voiture , Packages pack);
+    void addVoitureToPack ( Long id, Packages pack);
     void addEmployeToDevis (Employe employe , Devis devis);
     void addPieceToVoiture(Piece p , Voiture v );
+
     void addVoitureToPService(Voiture voiture , PrixServices prixServices);
     void addSerToPServices(Services services , PrixServices prixSer);
+
+    Voiture listVoiture(Moteur moteur , String modele);
+    Moteur getMoteurByName(String motorisation);
+
+    List<Packages> getPackByTypeNVtr( Voiture voiture);
+
+    void CalcCout (Packages pack);
+
 
 }

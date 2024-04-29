@@ -7,16 +7,9 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import org.sid.secservice.sec.JWTUtil;
-import org.sid.secservice.sec.entities.AppRole;
-import org.sid.secservice.sec.entities.AppUser;
-import org.sid.secservice.sec.entities.Devis;
-import org.sid.secservice.sec.entities.Historique;
+import org.sid.secservice.sec.entities.*;
 import org.sid.secservice.sec.services.AccountService;
 import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,16 +33,39 @@ public class AccountRestController {
     return accountService.listeUser();
     }
 
-    @PostMapping(path = "/users")
+    @PostMapping(path = "/h")
+    public void n (long w ){
+        System.out.println(w);
+
+    }
+    @PostMapping(path = "/saveUser")
     @PostAuthorize("hasAuthority('ADMIN')")
     public AppUser saveUser( @RequestBody AppUser appUser){
         return accountService.addNewUser(appUser);
     }
 
+    @PostMapping(path = "/deleteUser")
+    @PostAuthorize("hasAuthority('ADMIN')")
+    public void deleteUser( @RequestBody AppUser appUser){
+         accountService.deleteUser(appUser);
+    }
+
+
+    @GetMapping(path = "/userss")
+    @PostAuthorize("hasAuthority('USER')")
+    public Optional<IdUser> appUser(long id){
+        Optional<AppUser> usr = accountService.user(id);   /* Verfied api , it works perfectly */
+        IdUser us = new IdUser();
+        us.setUser(usr.get());
+        us.setId(id);
+        return Optional.of(us);
+    }
+
     @PostMapping(path = "/upUsers")
     @PostAuthorize("hasAuthority('ADMIN')")
-    public AppUser updateuser(@RequestBody Long id , AppUser user){
-        return accountService.updateUser(id , user);
+    public AppUser updateuser(@RequestBody  AppUser user){
+
+        return accountService.updateUser(user.getId() , user);
     }
 
     @PostMapping(path = "/roles")
@@ -110,9 +126,31 @@ public class AccountRestController {
         });
         return historiques;
     }
+
+    @PostMapping(path = "/Revision")
+    public List<Packages> Revision(@RequestBody RevisionForm revisionForm){
+      Moteur moteur = accountService.getMoteurByName(revisionForm.getMotorisation());
+      Voiture voiture = accountService.listVoiture(moteur , revisionForm.getModele());
+      List<Packages> packages = accountService.getPackByTypeNVtr(voiture);
+       return packages;
+    }
 }
 @Data
 class RoleUserForm{
     private String username;
     private String roleName;
+}
+@Data
+class RevisionForm{
+    private String username;
+    private String modele;
+    private String motorisation ;
+    private String kilometrage;
+    private List<Services> services;
+
+}
+@Data
+class IdUser{
+    private long id;
+    private AppUser user;
 }

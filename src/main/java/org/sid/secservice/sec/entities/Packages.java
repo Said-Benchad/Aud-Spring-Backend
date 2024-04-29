@@ -18,14 +18,15 @@ public class Packages {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "codePack", updatable = false, nullable = false)
     private UUID codePack;
-    private  String Type ;
+    private  String type ;
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Services> services = new ArrayList<>();
-    @ManyToMany
-    private Collection<Voiture> voiture;
-    private Integer cout;
-
-
-
+    @ManyToOne
+    private Voiture voiture;
+    private Double cout ;
+    public void resetCout(){
+        double a = 0;
+        setCout( a);
+    }
 
 }

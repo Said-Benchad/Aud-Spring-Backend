@@ -13,6 +13,11 @@ import java.util.List;
 @Entity
 @Data @NoArgsConstructor @AllArgsConstructor
 public class AppUser {
+
+    public AppUser(  String username , String password){
+        this.username = username;
+        this.password = password;
+    }
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private  Long id;
     private String username;
@@ -25,5 +30,6 @@ public class AppUser {
     @OneToMany(mappedBy = "client",fetch = FetchType.LAZY)
     @Column(name = "CDEVIS", updatable = false, nullable = false)
     private Collection<Devis> devis;
+
 
 }
