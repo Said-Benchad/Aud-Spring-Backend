@@ -15,7 +15,7 @@ public class Moteur {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "codeMoteur", updatable = false, nullable = false)
-    private UUID codeMoteur ;
+    private Long codeMoteur ;
     private String cylindee ;
     private String puissance;
     private String typeMotorisation;

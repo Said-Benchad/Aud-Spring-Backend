@@ -321,7 +321,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Moteur updateMoteur(UUID id, Moteur moteur) {
+    public Moteur updateMoteur(Long id, Moteur moteur) {
         Optional<Moteur> moteur1 = moteurRepository.findById(id);
 
         if (moteur1.isPresent()) {
@@ -406,9 +406,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void addMoteurToVoiture(Moteur moteur, Voiture voiture) {
-        //voiture.setMoteur(moteur);
-       System.out.println(voitureRepository.findAll());
-         //voitureRepository.save(voiture);
+        voiture.setMoteur(moteur);
+        voitureRepository.save(voiture);
     }
 
     @Override

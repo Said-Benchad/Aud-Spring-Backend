@@ -1,5 +1,5 @@
 package org.sid.secservice.sec.web;
-
+import org.springframework.web.bind.annotation.CrossOrigin;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -22,6 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
+@CrossOrigin(origins = "http:/localhost", allowedHeaders = "*")
 public class AccountRestController {
     private final AccountService accountService;
     public AccountRestController(AccountService accountService) {
@@ -36,6 +37,11 @@ public class AccountRestController {
     @PostMapping(path = "/h")
     public void n (long w ){
         System.out.println(w);
+
+    }
+    @GetMapping(path = "/h")
+    public String na (){
+        return "sfdqqdqsdsq";
 
     }
     @PostMapping(path = "/saveUser")

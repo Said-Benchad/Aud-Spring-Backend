@@ -103,14 +103,9 @@ public class SecServiceApplication {
 			accountService.addNewVoiture(v6);
 			Voiture v7 = new Voiture("Q2", "URBAN BVM",m4);
 			accountService.addNewVoiture(v7);
-			/*accountService.addMoteurToVoiture(m1,v1);
-			accountService.addMoteurToVoiture(m1,v2);
-			accountService.addMoteurToVoiture(m1,v3);
-			accountService.addMoteurToVoiture(m1,v4);
-			accountService.addMoteurToVoiture(m1,v5);
-			accountService.addMoteurToVoiture(m1,v6);
-			accountService.addMoteurToVoiture(m1,v7);*/
-			accountService.listVoiture(m1,"A3");
+
+
+
 
 
 		};

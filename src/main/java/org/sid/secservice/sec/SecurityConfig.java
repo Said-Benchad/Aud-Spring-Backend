@@ -48,7 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //http.authorizeRequests().antMatchers(HttpMethod.POST,"/users/**").hasAuthority("ADMIN");
         //http.authorizeRequests().antMatchers(HttpMethod.POST,"/users/**").hasAuthority("USER");
         //autoriser seulement cette demande meme si jwt n'est pas transmis
-        http.authorizeRequests().antMatchers("/h2-console/**","/refreshToken/**","/login" ).permitAll();
+        http.authorizeRequests().antMatchers("/h2-console/**","/refreshToken/**","/login","/h" ).permitAll();
         //pour s'authenthifier il faut remplir un formulate
         //le formLogin() va etre generer dans la partie frontEnd de l'app
         //http.formLogin();

@@ -36,7 +36,7 @@ public interface AccountService {
     Packages updatePack(UUID id ,Packages packages);
     void deletePack (Packages packages);
     Moteur addNewMoteur (Moteur moteur);
-    Moteur updateMoteur(UUID id , Moteur moteur);
+    Moteur updateMoteur(Long id , Moteur moteur);
     void deleteMoteur (Moteur moteur);
     Employe addNewEmploye ( Employe employe);
     Employe updateEmploye ( Long id , Employe eploye);
