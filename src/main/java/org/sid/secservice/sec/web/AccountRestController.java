@@ -1,5 +1,5 @@
 package org.sid.secservice.sec.web;
-import org.springframework.web.bind.annotation.CrossOrigin;
+
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -9,11 +9,17 @@ import lombok.Data;
 import org.sid.secservice.sec.JWTUtil;
 import org.sid.secservice.sec.entities.*;
 import org.sid.secservice.sec.services.AccountService;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,32 +27,43 @@ import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@CrossOrigin
 @RestController
-@CrossOrigin(origins = "http:/localhost", allowedHeaders = "*")
-public class AccountRestController {
+public class AccountRestController implements WebMvcConfigurer {
     private final AccountService accountService;
     public AccountRestController(AccountService accountService) {
         this.accountService = accountService;
     }
-    @GetMapping(path = "/users")
+    
+
+
+
+    
+
+    @GetMapping(path = "/get-users")
     @PostAuthorize("hasAuthority('USER')")
     public List<AppUser> appUsers(){
     return accountService.listeUser();
     }
 
     @PostMapping(path = "/h")
-    public void n (long w ){
-        System.out.println(w);
+    public void n (@RequestBody AppUser user){
+        System.out.println(user.getUsername());
 
     }
-    @GetMapping(path = "/h")
-    public String na (){
-        return "sfdqqdqsdsq";
+
+    @GetMapping(path = "/getTest")
+    public String testGet (){
+        System.out.println("dazt");
+
+        return "Request dazt";
 
     }
+
     @PostMapping(path = "/saveUser")
-    @PostAuthorize("hasAuthority('ADMIN')")
+    // @PostAuthorize("hasAuthority('ADMIN')")
     public AppUser saveUser( @RequestBody AppUser appUser){
+        System.out.println(appUser.getUsername());
         return accountService.addNewUser(appUser);
     }
 
