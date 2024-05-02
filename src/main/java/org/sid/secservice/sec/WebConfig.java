@@ -1,3 +1,4 @@
+/*
 package org.sid.secservice.sec;
 
 import org.springframework.context.annotation.Configuration;
@@ -10,8 +11,8 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3306") // Allow requests from any origin
+                .allowedOrigins("http://localhost:51069") // Allow requests from any origin
                 .allowedMethods("GET", "POST", "PUT", "DELETE") // Allow specific HTTP methods
                 .allowedHeaders("*"); // Allow all headers
     }
-}
+}*/

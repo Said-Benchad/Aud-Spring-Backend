@@ -21,4 +21,8 @@ public class MainOeuvre {
     @OneToOne
     private Services service ;
 
+    public MainOeuvre( String s, double i) {
+        this.nom=s;
+        this.cout=i;
+    }
 }

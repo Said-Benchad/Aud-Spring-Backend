@@ -27,7 +27,7 @@ import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@CrossOrigin
+
 @RestController
 public class AccountRestController implements WebMvcConfigurer {
     private final AccountService accountService;
@@ -144,7 +144,7 @@ public class AccountRestController implements WebMvcConfigurer {
         List<Devis> devisList =accountService.listeDevisByclient(user);
         List<Historique> historiques = new ArrayList<>();
         devisList.forEach(e->{
-            Historique htr = new Historique(e.getTitre_devis(),e.getDateCreation());
+            Historique htr = new Historique(e.getTitre_devis(),e.getDateCreation(), e.getStatusDevis());
             historiques.add(htr);
         });
         return historiques;

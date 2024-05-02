@@ -17,8 +17,9 @@ public class Devis {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "codeDevis", updatable = false, nullable = false)
-    private UUID code_devis ;
+    private Long code_devis ;
     private String titre_devis;
+    private  String devisURL;
     @ManyToOne
     private AppUser client;
     @OneToOne

@@ -118,9 +118,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.headers().frameOptions().disable();
 
         http.authorizeRequests()
-            .antMatchers("/h2-console/**", "/refreshToken/**", "/login", "/saveUser", "/h", "/getTest", "/*")
-            .permitAll()
-            .anyRequest().authenticated();
+            .antMatchers( "/refreshToken/**", "/login", "/saveUser", "/h", "/getTest").permitAll();
+
+        http.authorizeRequests().anyRequest().authenticated();
 
         http.addFilter(new JwtAuthenticationFilter(authenticationManagerBean()));
         http.addFilterAfter(new JwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -130,8 +130,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:61603");
+        config.addAllowedOrigin("http://localhost:5326");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);

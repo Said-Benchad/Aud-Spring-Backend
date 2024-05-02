@@ -17,7 +17,7 @@ public class Packages {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "codePack", updatable = false, nullable = false)
-    private UUID codePack;
+    private Long codePack;
     private  String type ;
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Services> services = new ArrayList<>();

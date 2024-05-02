@@ -3,6 +3,7 @@ package org.sid.secservice.sec.entities;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Entity
@@ -12,6 +13,11 @@ import java.util.Collection;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Services {
+    public Services(String nom){
+        this.nom = nom;
+        this.packages = new ArrayList<>();
+        this.prixService = new ArrayList<>();
+    }
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idService;
     private String nom ;

@@ -4,8 +4,6 @@ import org.sid.secservice.sec.entities.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
-
 public interface AccountService {
     AppUser addNewUser(AppUser appUser);
     AppUser updateUser(Long id , AppUser user);
@@ -21,7 +19,7 @@ public interface AccountService {
     Services updateService( Long id , Services services);
     void deleteService (Services services);
     Devis addNewDevis(Devis devis);
-    Devis updateDevis(UUID id ,Devis devis);
+    Devis updateDevis(Long id ,Devis devis);
     void deleteDevis (Devis devis);
     List<PrixServices> prixservices(Voiture voiture);
     List<PrixServices> prixservices(Services services);
@@ -33,7 +31,7 @@ public interface AccountService {
     MainOeuvre updateMainOeuvre (Long id , MainOeuvre mainOeuvre);
     void deleteMainOeuvre(MainOeuvre mainOeuvre);
     Packages addNewPack (Packages packages);
-    Packages updatePack(UUID id ,Packages packages);
+    Packages updatePack(Long id ,Packages packages);
     void deletePack (Packages packages);
     Moteur addNewMoteur (Moteur moteur);
     Moteur updateMoteur(Long id , Moteur moteur);
@@ -42,6 +40,7 @@ public interface AccountService {
     Employe updateEmploye ( Long id , Employe eploye);
     void deleteEmploye (Employe employe);
     void deleteUser (AppUser appUser );
+    Services addNewService( Services services);
 
     Optional<AppUser> user(Long id);
 

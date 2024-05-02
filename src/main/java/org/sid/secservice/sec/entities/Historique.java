@@ -14,4 +14,5 @@ import java.util.Date;
 public class Historique {
     private String title;
     private Date CretaedAt;
+    private StatusDevis statusDevis;
 }

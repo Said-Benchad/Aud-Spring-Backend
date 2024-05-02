@@ -172,7 +172,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Devis updateDevis(UUID id, Devis devis) {
+    public Devis updateDevis(Long id, Devis devis) {
         Optional<Devis> devis1 = devisRepository.findById(id);
 
         if (devis1.isPresent()) {
@@ -288,7 +288,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Packages updatePack(UUID id, Packages packages) {
+    public Packages updatePack(Long id, Packages packages) {
         Optional<Packages> packages1 = packagesRepository.findById(id);
 
         if (packages1.isPresent()) {
@@ -321,7 +321,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Moteur updateMoteur(UUID id, Moteur moteur) {
+    public Moteur updateMoteur(Long id, Moteur moteur) {
         Optional<Moteur> moteur1 = moteurRepository.findById(id);
 
         if (moteur1.isPresent()) {
@@ -395,6 +395,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public Services addNewService(Services services) {
+        return servicesRepository.save(services);
+    }
+
+    @Override
     public Optional<AppUser> user(Long id) {
         return appUserRepository.findById(id);
     }
@@ -406,9 +411,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void addMoteurToVoiture(Moteur moteur, Voiture voiture) {
-    //     //voiture.setMoteur(moteur);
-    //    System.out.println(voitureRepository.findAll());
-    //      //voitureRepository.save(voiture);
+         voiture.setMoteur(moteur);
+          voitureRepository.save(voiture);
     }
 
     @Override
