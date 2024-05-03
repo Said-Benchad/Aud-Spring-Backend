@@ -1,4 +1,4 @@
-package org.sid.secservice.sec.web;
+package org.sid.secservice.sec.controllers;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -6,7 +6,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
-import org.sid.secservice.sec.JWTUtil;
 import org.sid.secservice.sec.entities.*;
 import org.sid.secservice.sec.services.AccountService;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +28,10 @@ import java.util.stream.Collectors;
 
 
 @RestController
+@RequestMapping("/api/test")
+
 public class AccountRestController implements WebMvcConfigurer {
+    
     private final AccountService accountService;
     public AccountRestController(AccountService accountService) {
         this.accountService = accountService;
@@ -101,54 +103,54 @@ public class AccountRestController implements WebMvcConfigurer {
          accountService.addRoletoUser(roleUserForm.getUsername(),roleUserForm.getRoleName());
     }
 
-    @GetMapping(path = "/refreshToken")
-    public void refreshToken(HttpServletRequest request , HttpServletResponse response) throws Exception{
-        String authToken = request.getHeader(JWTUtil.AUTH_HEADER);
-        if(authToken!=null && authToken.startsWith(JWTUtil.PREFIX)){
-            try{
-                String jwt = authToken.substring(JWTUtil.PREFIX.length());//length = 7
-                Algorithm algo = Algorithm.HMAC256(JWTUtil.SECRET);
-                JWTVerifier jwtVerifier = JWT.require(algo).build();
-                DecodedJWT decodedJWT = jwtVerifier.verify(jwt);
-                String username = decodedJWT.getSubject();
-                AppUser appUser = accountService.LoadUserByUsername(username);
-                String jwtAccessToken = JWT.create()
-                        .withSubject(appUser.getUsername())
-                        .withExpiresAt(new Date(System.currentTimeMillis()+JWTUtil.EXPIRE_ACCESS_TOKEN))
-                        .withIssuer(request.getRequestURL().toString())
-                        .withClaim("role",appUser.getAppRole().stream().map(r->r.getRoleName()).collect(Collectors.toList()))
-                        .sign(algo);
-                Map<String,String >idToken = new HashMap<>();
-                idToken.put("acces-token",jwtAccessToken);
-                idToken.put("refresh-token",jwt);
-                response.setContentType("application/json");
-                new ObjectMapper().writeValue(response.getOutputStream(),idToken);
-            }catch (Exception e){
+    // @GetMapping(path = "/refreshToken")
+    // public void refreshToken(HttpServletRequest request , HttpServletResponse response) throws Exception{
+    //     String authToken = request.getHeader(JWTUtil.AUTH_HEADER);
+    //     if(authToken!=null && authToken.startsWith(JWTUtil.PREFIX)){
+    //         try{
+    //             String jwt = authToken.substring(JWTUtil.PREFIX.length());//length = 7
+    //             Algorithm algo = Algorithm.HMAC256(JWTUtil.SECRET);
+    //             JWTVerifier jwtVerifier = JWT.require(algo).build();
+    //             DecodedJWT decodedJWT = jwtVerifier.verify(jwt);
+    //             String username = decodedJWT.getSubject();
+    //             AppUser appUser = accountService.LoadUserByUsername(username);
+    //             String jwtAccessToken = JWT.create()
+    //                     .withSubject(appUser.getUsername())
+    //                     .withExpiresAt(new Date(System.currentTimeMillis()+JWTUtil.EXPIRE_ACCESS_TOKEN))
+    //                     .withIssuer(request.getRequestURL().toString())
+    //                     .withClaim("role",appUser.getAppRole().stream().map(r->r.getRoleName()).collect(Collectors.toList()))
+    //                     .sign(algo);
+    //             Map<String,String >idToken = new HashMap<>();
+    //             idToken.put("acces-token",jwtAccessToken);
+    //             idToken.put("refresh-token",jwt);
+    //             response.setContentType("application/json");
+    //             new ObjectMapper().writeValue(response.getOutputStream(),idToken);
+    //         }catch (Exception e){
 
-                throw e;
-            }
-        }
-        else {
-            throw new RuntimeException("Refresh token required");
-        }
-    }
+    //             throw e;
+    //         }
+    //     }
+    //     else {
+    //         throw new RuntimeException("Refresh token required");
+    //     }
+    // }
 
-    @GetMapping(path = "/profile")
-    public AppUser profile(Principal principal){
-        return accountService.LoadUserByUsername(principal.getName());
-    }
+    // @GetMapping(path = "/profile")
+    // public AppUser profile(Principal principal){
+    //     return accountService.LoadUserByUsername(principal.getName());
+    // }
 
-    @GetMapping(path = "/historique")
-    public List<Historique> historique(Principal principal){
-        AppUser user = accountService.LoadUserByUsername(principal.getName());
-        List<Devis> devisList =accountService.listeDevisByclient(user);
-        List<Historique> historiques = new ArrayList<>();
-        devisList.forEach(e->{
-            Historique htr = new Historique(e.getTitre_devis(),e.getDateCreation(), e.getStatusDevis());
-            historiques.add(htr);
-        });
-        return historiques;
-    }
+    // @GetMapping(path = "/historique")
+    // public List<Historique> historique(Principal principal){
+    //     AppUser user = accountService.LoadUserByUsername(principal.getName());
+    //     List<Devis> devisList =accountService.listeDevisByclient(user);
+    //     List<Historique> historiques = new ArrayList<>();
+    //     devisList.forEach(e->{
+    //         Historique htr = new Historique(e.getTitre_devis(),e.getDateCreation(), e.getStatusDevis());
+    //         historiques.add(htr);
+    //     });
+    //     return historiques;
+    // }
 
     @PostMapping(path = "/Revision")
     public List<Packages> Revision(@RequestBody RevisionForm revisionForm){

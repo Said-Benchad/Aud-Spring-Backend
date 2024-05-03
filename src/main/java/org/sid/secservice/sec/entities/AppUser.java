@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+
+import org.springframework.security.core.userdetails.User;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -22,7 +25,8 @@ public class AppUser {
     private  Long id;
     private  String firstName;
     private  String lastName;
-    private String userURL ;
+    private String avatar ;
+    private String email;
     private String username;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;

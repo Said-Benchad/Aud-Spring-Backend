@@ -1,6 +1,9 @@
 package org.sid.secservice.sec.services;
 
+import org.sid.secservice.sec.entities.AppRole;
 import org.sid.secservice.sec.entities.AppUser;
+import org.sid.secservice.sec.rep.AppUserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -11,24 +14,23 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
+import javax.transaction.Transactional;
+
+import java.util.*;
+
 @Service
 public class UserDetailServiceImpl implements UserDetailsService {
-    private AccountService accountService ;
+    @Autowired
+  AppUserRepository userRepository;
 
-    public UserDetailServiceImpl(AccountService accountService) {
-        this.accountService = accountService;
-    }
-    //lorsque l'utilisateur rempli le formulaire on fait appel a cette methode pour recuperer un user
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        //tout ca pour recuperer un user a travers son nom
+  @Override
+  @Transactional
+  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    AppUser user = userRepository.findByUsername(username)
+        .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
 
-        AppUser appUser = accountService.LoadUserByUsername(username);
-        //ici on doit convertir de la collection appRole a la collection grandAuthorities
-        Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        appUser.getAppRole().forEach(e ->{
-            grantedAuthorities.add(new SimpleGrantedAuthority(e.getRoleName()));
-        });
-        return new User(appUser.getUsername(), appUser.getPassword(), grantedAuthorities);
-    }
+    return UserDetailsImpl.build(user);
+  }
+    
 }

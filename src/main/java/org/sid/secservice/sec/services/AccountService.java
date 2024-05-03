@@ -9,7 +9,7 @@ public interface AccountService {
     AppUser updateUser(Long id , AppUser user);
     AppRole addNewRole( AppRole appRole);
     void addRoletoUser(String username ,String roleName );
-    AppUser LoadUserByUsername( String username);
+    Optional<AppUser> LoadUserByUsername( String username);
     List<AppUser> listeUser();
     List<Devis> listeDevisByclient(AppUser user);
     Voiture addNewVoiture(Voiture voiture);
