@@ -8,5 +8,5 @@ import java.util.List;
 import java.util.UUID;
 
 public interface PackagesRepository extends JpaRepository<Packages , Long> {
-    List<Packages> findByVoitureContaining (Voiture voiture);
+    List<Packages> findByVoiture (Voiture voiture);
 }

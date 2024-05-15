@@ -7,4 +7,5 @@ import java.util.UUID;
 
 public interface MoteurRepository extends JpaRepository<Moteur, Long> {
     Moteur findByTypeMotorisation(String motorisation);
+    Moteur findByPuissance(String puissance);
 }

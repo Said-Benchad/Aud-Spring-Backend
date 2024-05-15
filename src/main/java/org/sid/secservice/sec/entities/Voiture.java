@@ -25,14 +25,14 @@ public class Voiture {
     private String finition;
     @OneToOne
     private Moteur moteur;
-    @OneToMany(mappedBy = "voiture" , fetch = FetchType.LAZY)
-    private Collection<Devis> devis ;
+//    @OneToMany(mappedBy = "voiture" , fetch = FetchType.LAZY)
+//    private Collection<Devis> devis ;
     @ManyToOne
     private AppUser proprietaire; // a discuter had lblan
-    @ManyToMany(mappedBy = "voiture",fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     private Collection<Piece> pieces;
-    @OneToMany(mappedBy = "voit" , fetch = FetchType.LAZY)
-    private Collection<PrixServices> prixService;
+//    @OneToMany(mappedBy = "voiture" , fetch = FetchType.LAZY)
+//    private Collection<PrixServices> prixService;
 //    @ManyToMany(fetch = FetchType.LAZY)
 //    private Collection<Packages> packages;
 

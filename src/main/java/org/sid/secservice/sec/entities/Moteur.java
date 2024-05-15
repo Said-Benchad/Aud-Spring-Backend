@@ -22,8 +22,8 @@ public class Moteur {
 
 
 
-    @OneToOne(mappedBy = "moteur")
-    private Voiture voiture;
+//    @OneToOne(mappedBy = "moteur")
+//    private Voiture voiture;
     public Moteur( String cylindee , String puissance ,String typeMotorisation){
         this.cylindee =cylindee;
         this.puissance = puissance;

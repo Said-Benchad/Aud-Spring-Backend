@@ -9,4 +9,6 @@ import java.util.UUID;
 
 public interface DevisRepository extends JpaRepository<Devis, Long> {
     List<Devis> findAllByClient (AppUser user);
+
+
 }

@@ -20,6 +20,6 @@ public class Employe  {
     private String adress;
     private String mail;
     private String password;
-    @ManyToMany(mappedBy = "employes", fetch = FetchType.LAZY)
-    private Collection<Devis> devis;
+//    @ManyToMany(mappedBy = "employes", fetch = FetchType.LAZY)
+//    private Collection<Devis> devis;
 }

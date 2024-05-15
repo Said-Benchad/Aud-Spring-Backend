@@ -10,7 +10,8 @@ import java.util.Optional;
 public interface VoitureRepository extends JpaRepository<Voiture,Long> {
     Optional<Voiture> findById(Long id);
 
-    Voiture findByModeleAndMoteur( String modele ,Moteur moteur ) ;
+    Voiture findByModeleAndMoteur(String modele, Moteur moteur);
+
     List<Voiture> findAllByMoteur(Moteur moteur);
 
 }

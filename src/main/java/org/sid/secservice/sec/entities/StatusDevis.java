@@ -18,8 +18,7 @@ public class StatusDevis {
     private Status status ;
     @Temporal(TemporalType.TIMESTAMP)
     private Date dureeEstimee;
-    @OneToOne(mappedBy = "statusDevis")
-    private Devis devis;
+
 
 
 }

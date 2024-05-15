@@ -14,9 +14,9 @@ public class PrixServices {
     @Id @GeneratedValue
     private Long idPrixService ;
     @ManyToOne
-    private Voiture voit;
+    private Voiture voiture;
     @ManyToOne
-    private Services ser;
+    private Services services;
     private double prixServVoitr;
 
 }

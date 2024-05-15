@@ -15,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Devis {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "codeDevis", updatable = false, nullable = false)
     private Long code_devis ;
     private String titre_devis;
@@ -33,5 +33,9 @@ public class Devis {
     private Date dateCreation;
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateModif ;
+
+   @ManyToMany
+    private List<Services> services;
+
 
 }

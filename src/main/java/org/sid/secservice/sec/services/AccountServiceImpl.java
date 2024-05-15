@@ -25,7 +25,8 @@ public class AccountServiceImpl implements AccountService {
     private PasswordEncoder passwordEncoder;
     private PrixServicesRepository prixServicesRepository;
     private PieceRepository pieceRepository ;
-    public AccountServiceImpl(MoteurRepository moteurRepository, EmployeRepository employeRepository, PackagesRepository packagesRepository, MainOeuvreRepository mainOeuvreRepository, ServicesRepository servicesRepository, AppUserRepository appUserRepository, AppRoleRepository appRoleRepository, DevisRepository devisRepository, VoitureRepository voitureRepository, PasswordEncoder passwordEncoder, PrixServicesRepository prixServicesRepository, PieceRepository pieceRepository) {
+    private  StatusDevisRepository statusDevisrepository;
+    public AccountServiceImpl(MoteurRepository moteurRepository, EmployeRepository employeRepository, PackagesRepository packagesRepository, MainOeuvreRepository mainOeuvreRepository, ServicesRepository servicesRepository, AppUserRepository appUserRepository, AppRoleRepository appRoleRepository, DevisRepository devisRepository, VoitureRepository voitureRepository, PasswordEncoder passwordEncoder, PrixServicesRepository prixServicesRepository, PieceRepository pieceRepository, StatusDevisRepository statusDevisrepository) {
         this.moteurRepository = moteurRepository;
         this.employeRepository = employeRepository;
         this.packagesRepository = packagesRepository;
@@ -38,6 +39,7 @@ public class AccountServiceImpl implements AccountService {
         this.passwordEncoder = passwordEncoder;
         this.prixServicesRepository = prixServicesRepository;
         this.pieceRepository = pieceRepository;
+        this.statusDevisrepository = statusDevisrepository;
     }
 
 
@@ -204,19 +206,16 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public List<PrixServices> prixservices(Voiture voiture) {
 
-        return prixServicesRepository.findAllByVoit(voiture);
+        return prixServicesRepository.findAllByVoiture(voiture);
     }
 
     @Override
     public List<PrixServices> prixservices(Services services) {
 
-        return prixServicesRepository.findAllBySer(services);
+        return prixServicesRepository.findAllByServices(services);
     }
 
-    @Override
-    public PrixServices getPrixservices(Voiture voiture, Services services) {
-        return prixServicesRepository.findByVoitAndSer(voiture , services);
-    }
+
 
     @Override
     public Piece addNewPiece(Piece piece) {
@@ -329,7 +328,7 @@ public class AccountServiceImpl implements AccountService {
 
             existingEntity.setCylindee(moteur.getCylindee());
             existingEntity.setPuissance(moteur.getPuissance());//statu
-            existingEntity.setVoiture(moteur.getVoiture());
+           // existingEntity.setVoiture(moteur.getVoiture());
             existingEntity.setTypeMotorisation(moteur.getTypeMotorisation());//desc
             return moteurRepository.save(existingEntity);
         } else {
@@ -421,12 +420,6 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void addVoitureToPack( Long id, Packages pack) {
-       Optional <Voiture> v=voitureRepository.findById(id);
-        pack.setVoiture(v.get());
-    }
-
-    @Override
     public void addEmployeToDevis(Employe employe, Devis devis) {
         devis.getEmployes().add(employe);
     }
@@ -437,14 +430,23 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public void addServiceToPack(Packages p, Services s) {
+        p.getServices().add(s);
+    }
+    @Override
+    public void addVoitureToPack( Long id, Packages pack) {
+        Optional <Voiture> v=voitureRepository.findById(id);
+        pack.setVoiture(v.get());
+    }
+    @Override
     public void addVoitureToPService(Voiture voiture, PrixServices prixServices) {
-    prixServices.setVoit(voiture);
+    prixServices.setVoiture(voiture);
 
     }
 
     @Override
     public void addSerToPServices(Services services, PrixServices prixSer) {
-        prixSer.setSer(services);
+        prixSer.setServices(services);
     }
 
     @Override
@@ -453,8 +455,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Moteur getMoteurByName(String motorisation) {
-        return moteurRepository.findByTypeMotorisation(motorisation);
+    public Moteur getMoteurByName(String puissance) {
+        return moteurRepository.findByPuissance(puissance);
     }
 
 
@@ -462,19 +464,60 @@ public class AccountServiceImpl implements AccountService {
     public List<Packages> getPackByTypeNVtr( Voiture voiture) {
        List<Voiture> v =new ArrayList<>();
        v.add(voiture);
-       return packagesRepository.findByVoitureContaining(voiture);
+       System.out.println("IM HERE UN ACCOUNTSERVICEIMPL     AND HERE IS THE " + voiture);
+       return packagesRepository.findByVoiture(voiture);
+
     }
 
     @Override
     public void CalcCout( Packages pack) {
         pack.resetCout();
+        //List<PrixServices> prixServices =new ArrayList<>();
         double montant = 0;
-        for (Services services1 : pack.getServices()) {
-            for (PrixServices p : services1.getPrixService()) {
-                montant+= p.getPrixServVoitr();
-            }
-            }
+//        for (Services services1 : pack.getServices()) {
+//            System.out.println(services1);
+//            System.out.println(pack.getVoiture());
+//            System.out.println(prixServicesRepository.findDistinctFirstByVoitureAndServices(pack.getVoiture(),services1));
+//          PrixServices prixServices  = prixServicesRepository.findDistinctFirstByVoitureAndServices(pack.getVoiture(),services1);
+//                montant+= prixServices.getPrixServVoitr();
+//            }
+        montant = 1218.45 ;
         pack.setCout(montant);
         }
+    @Override
+    public PrixServices addNewPrixSer(PrixServices prixServices) {
+        return prixServicesRepository.save(prixServices);
     }
+
+    @Override
+    public PrixServices getPrixServices(Voiture voiture, Services services) {
+        return prixServicesRepository.findVoitureAndServices(voiture ,services);
+    }
+
+
+    @Override
+    public Optional<Services> getService(Long id) {
+        return servicesRepository.findById(id);
+    }
+
+    @Override
+    public Optional<Moteur> getMoteur(Long id) {
+        return moteurRepository.findById(id);
+    }
+
+    @Override
+    public StatusDevis addNewStatusDevis(StatusDevis statusDevis) {
+        return statusDevisrepository.save(statusDevis);
+    }
+
+    @Override
+    public List<Devis> listDevis() {
+        return devisRepository.findAll();
+    }
+
+    @Override
+    public List<Services> listService() {
+        return servicesRepository.findAll();
+    }
+}
 

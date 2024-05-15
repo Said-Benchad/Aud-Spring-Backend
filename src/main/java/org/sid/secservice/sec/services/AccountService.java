@@ -23,7 +23,6 @@ public interface AccountService {
     void deleteDevis (Devis devis);
     List<PrixServices> prixservices(Voiture voiture);
     List<PrixServices> prixservices(Services services);
-    PrixServices getPrixservices(Voiture voiture , Services services);
     Piece addNewPiece(Piece piece);
     Piece updatePiece(Long id , Piece piece);
     void deletePiece(Piece piece);
@@ -51,16 +50,25 @@ public interface AccountService {
     void addVoitureToPack ( Long id, Packages pack);
     void addEmployeToDevis (Employe employe , Devis devis);
     void addPieceToVoiture(Piece p , Voiture v );
+    void addServiceToPack(Packages p , Services s);
 
     void addVoitureToPService(Voiture voiture , PrixServices prixServices);
     void addSerToPServices(Services services , PrixServices prixSer);
 
     Voiture listVoiture(Moteur moteur , String modele);
-    Moteur getMoteurByName(String motorisation);
+    Moteur getMoteurByName(String puissance);
 
     List<Packages> getPackByTypeNVtr( Voiture voiture);
 
     void CalcCout (Packages pack);
+    PrixServices addNewPrixSer(PrixServices prixServices);
+    PrixServices getPrixServices(Voiture voiture , Services services);
+    Optional<Services> getService(Long id);
+    Optional<Moteur> getMoteur (Long id);
+    StatusDevis addNewStatusDevis ( StatusDevis statusDevis);
+    List<Devis> listDevis();
+    List<Services> listService();
+
 
 
 }

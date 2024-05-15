@@ -34,9 +34,9 @@ public class AppUser {
     private Collection<AppRole> appRole = new ArrayList<>();
     @OneToMany(mappedBy = "proprietaire" , fetch = FetchType.LAZY)
     private Collection<Voiture> voiture ;
-    @OneToMany(mappedBy = "client",fetch = FetchType.LAZY)
-    @Column(name = "CDEVIS", updatable = false, nullable = false)
-    private Collection<Devis> devis;
+//    @OneToMany(mappedBy = "client",fetch = FetchType.LAZY)
+//    @Column(name = "CDEVIS", updatable = false, nullable = false)
+//    private Collection<Devis> devis;
 
 
 }

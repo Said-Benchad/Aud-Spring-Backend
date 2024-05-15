@@ -22,7 +22,7 @@ public class Piece {
     private String nom;
     private String reference;
     private float prix;
-    @ManyToMany
-    private Collection<Voiture> voiture ;
+//    @ManyToMany
+//    private Collection<Voiture> voiture ;
 
 }

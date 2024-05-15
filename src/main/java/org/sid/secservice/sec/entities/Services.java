@@ -13,21 +13,21 @@ import java.util.Collection;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Services {
-    public Services(String nom){
+    public Services(String nom ){
         this.nom = nom;
-        this.packages = new ArrayList<>();
-        this.prixService = new ArrayList<>();
+        //this.packages = new ArrayList<>();
+        //this.prixService = new ArrayList<>();
     }
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idService;
     private String nom ;
     @Enumerated(EnumType.STRING)
     private TypeService typeService ;
-    @OneToMany(mappedBy = "ser" , fetch = FetchType.LAZY)
-    private Collection<PrixServices> prixService ;
+//    @OneToMany(mappedBy = "services" , fetch = FetchType.LAZY)
+//    private Collection<PrixServices> prixService ;
     @OneToOne(mappedBy = "service")
     private MainOeuvre mainOeuvre;
-    @ManyToMany(mappedBy = "services" , fetch = FetchType.LAZY)
-   private Collection<Packages> packages ;
+//    @ManyToMany(mappedBy = "services" , fetch = FetchType.LAZY)
+//    private Collection<Packages> packages ;
 
 }

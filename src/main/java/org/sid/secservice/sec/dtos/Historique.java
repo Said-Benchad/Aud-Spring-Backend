@@ -1,9 +1,10 @@
-package org.sid.secservice.sec.entities;
+package org.sid.secservice.sec.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.sid.secservice.sec.entities.StatusDevis;
 
 import java.util.Date;
 

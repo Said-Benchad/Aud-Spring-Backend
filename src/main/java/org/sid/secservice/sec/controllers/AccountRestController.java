@@ -6,17 +6,13 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
+import org.sid.secservice.sec.dtos.Historique;
 import org.sid.secservice.sec.entities.*;
 import org.sid.secservice.sec.services.AccountService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -36,31 +32,15 @@ public class AccountRestController implements WebMvcConfigurer {
     public AccountRestController(AccountService accountService) {
         this.accountService = accountService;
     }
-    
 
-
-
-    
 
     @GetMapping(path = "/get-users")
     @PostAuthorize("hasAuthority('USER')")
-    public List<AppUser> appUsers(){
-    return accountService.listeUser();
+    public List<AppUser> appUsers() {
+        return accountService.listeUser();
     }
 
-    @PostMapping(path = "/h")
-    public void n (@RequestBody AppUser user){
-        System.out.println(user.getUsername());
 
-    }
-
-    @GetMapping(path = "/getTest")
-    public String testGet (){
-        System.out.println("dazt");
-
-        return "Request dazt";
-
-    }
 
     @PostMapping(path = "/saveUser")
     // @PostAuthorize("hasAuthority('ADMIN')")
@@ -140,24 +120,40 @@ public class AccountRestController implements WebMvcConfigurer {
     //     return accountService.LoadUserByUsername(principal.getName());
     // }
 
-    // @GetMapping(path = "/historique")
-    // public List<Historique> historique(Principal principal){
-    //     AppUser user = accountService.LoadUserByUsername(principal.getName());
-    //     List<Devis> devisList =accountService.listeDevisByclient(user);
-    //     List<Historique> historiques = new ArrayList<>();
-    //     devisList.forEach(e->{
-    //         Historique htr = new Historique(e.getTitre_devis(),e.getDateCreation(), e.getStatusDevis());
-    //         historiques.add(htr);
-    //     });
-    //     return historiques;
-    // }
+     @GetMapping(path = "/historique")
+     public List<Historique> historique(Principal principal ){
+        Optional<AppUser> user = accountService.LoadUserByUsername(principal.getName());
+//         Optional<AppUser> user = accountService.user( id);
+         List<Devis> devisList =accountService.listeDevisByclient(user.get());                                       // work with success
+         List<Historique> historiques = new ArrayList<>();
+         devisList.forEach(e->{
+             Historique htr = new Historique(e.getTitre_devis(),e.getDateCreation(), e.getStatusDevis());
+             historiques.add(htr);
+         });
+         return historiques;
+     }
 
-    @PostMapping(path = "/Revision")
+    @GetMapping(path = "/Revision")
     public List<Packages> Revision(@RequestBody RevisionForm revisionForm){
-      Moteur moteur = accountService.getMoteurByName(revisionForm.getMotorisation());
+      Moteur moteur = accountService.getMoteurByName(revisionForm.getPuissance());                  // working perfectly
       Voiture voiture = accountService.listVoiture(moteur , revisionForm.getModele());
       List<Packages> packages = accountService.getPackByTypeNVtr(voiture);
        return packages;
+    }
+    @GetMapping(path = "/getDevis")
+    public List<Devis> getAllDevis(){
+        return accountService.listDevis();
+    }
+    @GetMapping(path = "/getServices")
+    public List<Services> getAllServices(){
+        return accountService.listService();
+    }
+    @GetMapping(path = "/PrixSer")
+    public PrixServices prixservice(){
+        Moteur moteur = accountService.getMoteur(1l).get();
+        Voiture voiture = accountService.listVoiture(moteur , "A3");
+        Optional<Services> services= accountService.getService(1L);
+      return accountService.getPrixServices(voiture, services.get());
     }
 }
 @Data
@@ -169,10 +165,8 @@ class RoleUserForm{
 class RevisionForm{
     private String username;
     private String modele;
-    private String motorisation ;
-    private String kilometrage;
+    private String puissance ;
     private List<Services> services;
-
 }
 @Data
 class IdUser{
