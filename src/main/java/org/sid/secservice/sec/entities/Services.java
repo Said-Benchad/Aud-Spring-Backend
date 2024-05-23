@@ -5,28 +5,22 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
-@Getter
-@Setter
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Services {
-    public Services(String nom ){
-        this.nom = nom;
-        //this.packages = new ArrayList<>();
-        //this.prixService = new ArrayList<>();
-    }
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idService;
-    private String nom ;
-    @Enumerated(EnumType.STRING)
-    private TypeService typeService ;
+//    @Enumerated(EnumType.STRING)
 //    @OneToMany(mappedBy = "services" , fetch = FetchType.LAZY)
 //    private Collection<PrixServices> prixService ;
-    @OneToOne(mappedBy = "service")
-    private MainOeuvre mainOeuvre;
+    @ManyToMany
+    private List<MainOeuvre> mainOeuvre;
 //    @ManyToMany(mappedBy = "services" , fetch = FetchType.LAZY)
 //    private Collection<Packages> packages ;
 

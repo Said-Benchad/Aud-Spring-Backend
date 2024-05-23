@@ -21,6 +21,11 @@ public class AppUser {
         this.username = username;
         this.password = password;
     }
+    public AppUser(  String username , String password ,String email){
+        this.username = username;
+        this.password = password;
+        this.email=email;
+    }
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private  Long id;
     private  String firstName;

@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -20,7 +21,7 @@ public class Packages {
     private Long codePack;
     private  String type ;
     @ManyToMany(fetch = FetchType.EAGER)
-    private Collection<Services> services = new ArrayList<>();
+    private List<Revision> revision = new ArrayList<>();
     @ManyToOne
     private Voiture voiture;
     private Double cout ;

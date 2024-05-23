@@ -6,6 +6,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Getter
@@ -18,17 +19,12 @@ public class MainOeuvre {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idMO_Service ;
     private String nom;
-    private Double cout ;
+    /*@OneToMany(mappedBy = "mainOeuvre")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @OneToOne @ToString.Exclude
-    private Services service ;
+    private List<Prixmainouevre> prixMainOeuvres;*/
+//    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+//    @ManyToOne
+//    @ToString.Exclude
+//    private Services service ;
 
-    public MainOeuvre( String s, double i) {
-        this.nom=s;
-        this.cout=i;
-    }public MainOeuvre( String s,Services services ,double i) {
-        this.nom=s;
-        this.service =services;
-        this.cout=i;
-    }
 }

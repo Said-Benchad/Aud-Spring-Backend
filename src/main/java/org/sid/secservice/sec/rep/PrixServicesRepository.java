@@ -8,10 +8,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PrixServicesRepository extends JpaRepository<PrixServices,Long> {
     List<PrixServices> findAllByVoiture(Voiture voiture);
     List<PrixServices> findAllByServices(Services service);
     @Query("SELECT e FROM PrixServices e WHERE e.voiture = :voiture AND e.services = :services")
-    PrixServices findVoitureAndServices(@Param("voiture") Voiture voiture, @Param("services") Services services);
+   PrixServices findVoitureAndServices(@Param("voiture") Voiture voiture, @Param("services") Services services);
+
 }

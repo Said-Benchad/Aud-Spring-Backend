@@ -1,5 +1,6 @@
 package org.sid.secservice.sec.controllers;
 
+import org.sid.secservice.sec.dtos.IdUser;
 import org.sid.secservice.sec.entities.AppUser;
 import org.sid.secservice.sec.services.AccountService;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -19,7 +20,7 @@ public class UserController {
 
 
 
-                    //---------------------------------All the method work perfectly------------------------------------------------------------------------
+                    //---------------------------------All the methods work perfectly------------------------------------------------------------------------
     public UserController(AccountService accountService) {
         this.accountService = accountService;
     }

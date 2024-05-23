@@ -1,6 +1,9 @@
 package org.sid.secservice.sec.services;
 
 
+import org.sid.secservice.sec.dtos.MainOeuvreDTO;
+import org.sid.secservice.sec.dtos.PackDTO;
+import org.sid.secservice.sec.dtos.RevisionDTO;
 import org.sid.secservice.sec.entities.*;
 import org.sid.secservice.sec.rep.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,7 +29,10 @@ public class AccountServiceImpl implements AccountService {
     private PrixServicesRepository prixServicesRepository;
     private PieceRepository pieceRepository ;
     private  StatusDevisRepository statusDevisrepository;
-    public AccountServiceImpl(MoteurRepository moteurRepository, EmployeRepository employeRepository, PackagesRepository packagesRepository, MainOeuvreRepository mainOeuvreRepository, ServicesRepository servicesRepository, AppUserRepository appUserRepository, AppRoleRepository appRoleRepository, DevisRepository devisRepository, VoitureRepository voitureRepository, PasswordEncoder passwordEncoder, PrixServicesRepository prixServicesRepository, PieceRepository pieceRepository, StatusDevisRepository statusDevisrepository) {
+    private PrixMORepository prixMORepository;
+    private RevisionRepository revisionRepository;
+
+    public AccountServiceImpl(MoteurRepository moteurRepository, EmployeRepository employeRepository, PackagesRepository packagesRepository, MainOeuvreRepository mainOeuvreRepository, ServicesRepository servicesRepository, AppUserRepository appUserRepository, AppRoleRepository appRoleRepository, DevisRepository devisRepository, VoitureRepository voitureRepository, PasswordEncoder passwordEncoder, PrixServicesRepository prixServicesRepository, PieceRepository pieceRepository, StatusDevisRepository statusDevisrepository, PrixMORepository prixMORepository, RevisionRepository revisionRepository) {
         this.moteurRepository = moteurRepository;
         this.employeRepository = employeRepository;
         this.packagesRepository = packagesRepository;
@@ -40,6 +46,9 @@ public class AccountServiceImpl implements AccountService {
         this.prixServicesRepository = prixServicesRepository;
         this.pieceRepository = pieceRepository;
         this.statusDevisrepository = statusDevisrepository;
+        this.prixMORepository = prixMORepository;
+        this.revisionRepository = revisionRepository;
+
     }
 
 
@@ -77,14 +86,17 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void addRoletoUser(String username, String roleName) {
-    Optional<AppUser> appUser = appUserRepository.findByUsername(username);
-    AppRole appRole = appRoleRepository.findByRoleName(roleName);
-
+    Optional<AppUser> appUser = appUserRepository.findFirstByUsername(username);
+    System.out.println(appUser);
+    AppRole appRole = appRoleRepository.findFirstByRoleName(roleName);
+    System.out.println(appRole);
+    appUser.get().getAppRole().add(appRole);
+        appUserRepository.save(appUser.get());
     }
 
     @Override
     public Optional<AppUser> LoadUserByUsername(String username) {
-        return appUserRepository.findByUsername(username);
+        return appUserRepository.findFirstByUsername(username);
     }
 
     @Override
@@ -134,26 +146,23 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
-    @Override
-    public Services addService(Services services) {
-        return servicesRepository.save(services);
-    }
 
     @Override
     public Services updateService(Long id, Services services) {
 
-        Optional<Services> services1 = servicesRepository.findById(id);
-
-        if (services1.isPresent()) {
-            Services existingEntity = services1.get();
-
-            existingEntity.setNom(services.getNom());
-            existingEntity.setTypeService(services.getTypeService());
-
-            return servicesRepository.save(existingEntity);
-        } else {
-            throw new EntityNotFoundException("Entity not found");
-        }
+//        Optional<Services> services1 = servicesRepository.findById(id);
+//
+//        if (services1.isPresent()) {
+//            Services existingEntity = services1.get();
+//
+//            existingEntity.setNom(services.getNom());
+//            //existingEntity.setTypeService(services.getTypeService());
+//
+//            return servicesRepository.save(existingEntity);
+//        } else {
+//            throw new EntityNotFoundException("Entity not found");
+//        }
+        return null;
     }
 
     @Override
@@ -204,9 +213,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public List<PrixServices> prixservices(Voiture voiture) {
-
-        return prixServicesRepository.findAllByVoiture(voiture);
+    public List<PrixServices> prixservices() {
+        return prixServicesRepository.findAll();
     }
 
     @Override
@@ -262,8 +270,7 @@ public class AccountServiceImpl implements AccountService {
             MainOeuvre existingEntity = mainOeuvre1.get();
 
             existingEntity.setNom(mainOeuvre.getNom());
-            existingEntity.setCout(mainOeuvre.getCout());//statu
-            existingEntity.setService(mainOeuvre.getService());//desc
+           // existingEntity.setService(mainOeuvre.getService());//desc
             return mainOeuvreRepository.save(existingEntity);
         } else {
             throw new EntityNotFoundException("Entity not found");
@@ -295,7 +302,7 @@ public class AccountServiceImpl implements AccountService {
 
             existingEntity.setType(packages.getType());
             existingEntity.setCout(packages.getCout());//statu
-            existingEntity.setServices(packages.getServices());
+            existingEntity.setRevision(packages.getRevision());
             existingEntity.setVoiture(packages.getVoiture());//desc
             return packagesRepository.save(existingEntity);
         } else {
@@ -393,10 +400,7 @@ public class AccountServiceImpl implements AccountService {
 
     }
 
-    @Override
-    public Services addNewService(Services services) {
-        return servicesRepository.save(services);
-    }
+
 
     @Override
     public Optional<AppUser> user(Long id) {
@@ -430,8 +434,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void addServiceToPack(Packages p, Services s) {
-        p.getServices().add(s);
+    public void addServiceToPack(Packages p, Revision r) {
+        p.getRevision().add(r);
     }
     @Override
     public void addVoitureToPack( Long id, Packages pack) {
@@ -447,26 +451,6 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void addSerToPServices(Services services, PrixServices prixSer) {
         prixSer.setServices(services);
-    }
-
-    @Override
-    public Voiture listVoiture(Moteur moteur, String modele) {
-        return voitureRepository.findByModeleAndMoteur(modele,moteur);
-    }
-
-    @Override
-    public Moteur getMoteurByName(String puissance) {
-        return moteurRepository.findByPuissance(puissance);
-    }
-
-
-   @Override
-    public List<Packages> getPackByTypeNVtr( Voiture voiture) {
-       List<Voiture> v =new ArrayList<>();
-       v.add(voiture);
-       System.out.println("IM HERE UN ACCOUNTSERVICEIMPL     AND HERE IS THE " + voiture);
-       return packagesRepository.findByVoiture(voiture);
-
     }
 
     @Override
@@ -494,6 +478,40 @@ public class AccountServiceImpl implements AccountService {
         return prixServicesRepository.findVoitureAndServices(voiture ,services);
     }
 
+    @Override
+    public List<Prixmainouevre> getPrixMainOeuvre() {
+        return prixMORepository.findAll();
+    }
+
+    @Override
+    public Prixmainouevre getPrixMainOeuvre(Voiture voiture, MainOeuvre mainOeuvre) {
+        return prixMORepository.findFirstByVoitureAndMainOeuvre(voiture,mainOeuvre);
+    }
+
+    @Override
+    public List<RevisionDTO> listSerParV(Voiture voiture) {
+
+        List<Revision> revisions = revisionRepository.findAll();
+        List<RevisionDTO> revisionDTOList = new ArrayList<>();
+        for (Revision r : revisions) {
+            RevisionDTO rvsionDTO = new RevisionDTO();
+            PrixServices prixService = prixServicesRepository.findVoitureAndServices(voiture, r);
+            rvsionDTO.setId(r.getIdService());
+            rvsionDTO.setNom(r.getNom());
+            rvsionDTO.setCouSer(prixService.getPrixServVoitr());
+            for (MainOeuvre m : r.getMainOeuvre()) {
+                MainOeuvreDTO mainDTO = new MainOeuvreDTO();
+                Prixmainouevre prixmainouevre = prixMORepository.findFirstByVoitureAndMainOeuvre(voiture, m);
+                mainDTO.setId(prixmainouevre.getIdPrixMO());
+                mainDTO.setNom(prixmainouevre.getMainOeuvre().getNom());
+                mainDTO.setCoutMO(prixmainouevre.getPrixServVoitrMo());
+                rvsionDTO.getMainOeuvre().add(mainDTO);
+                revisionDTOList.add(rvsionDTO);
+            }
+        }
+        return revisionDTOList;
+    }
+
 
     @Override
     public Optional<Services> getService(Long id) {
@@ -519,5 +537,66 @@ public class AccountServiceImpl implements AccountService {
     public List<Services> listService() {
         return servicesRepository.findAll();
     }
+
+
+    //---------------------------------      DEMANDE DE DEVIS     -----------------------------------------\\
+    @Override
+    public Moteur getMoteurByName(String puissance) {
+        return moteurRepository.findByPuissance(puissance);
+    }
+
+    @Override
+    public Voiture getVoiture(Moteur moteur, String modele) {
+        return voitureRepository.findByModeleAndMoteur(modele,moteur);
+    }
+
+
+    @Override
+    public Packages getPackByTypeNVtr( Voiture voiture , String type) {
+
+        return packagesRepository.findFirstByVoitureAndType(voiture , type);
+
+    }
+
+    @Override
+    public List<Packages> getPack() {
+        return packagesRepository.findAll();
+    }
+
+
+    @Override
+    public Double calcMontant(Packages pack, List<Services> servicesList) {
+        double montat = 0;
+        double sum = 0;
+        List<PrixServices> prixServices = new ArrayList<>();
+        pack.getRevision().forEach((e)->{
+            prixServices.add(getPrixServices(pack.getVoiture(),e));
+        });
+        servicesList.forEach((e)->{
+            prixServices.add(getPrixServices(pack.getVoiture(),e));
+        });
+//        for (PrixServices prixSr : prixServices){
+//            montat+= prixSr.getPrixServVoitr();
+//            List<Prixmainouevre> prixmainouevres = prixSr.getPrixMainOeuvres();
+//            for (Prixmainouevre p : prixmainouevres){
+//                sum+=p.getPrixServVoitrMo();
+//            }
+//            montat+=sum;
+//
+//        }
+        return montat;
+    }
+
+    @Override
+    public Services addservice(Revision revision) {
+        return servicesRepository.save(revision);
+    }
+
+    @Override
+    public Services addservice(Reparation reparation) {
+        return servicesRepository.save(reparation);
+    }
+
+
 }
 

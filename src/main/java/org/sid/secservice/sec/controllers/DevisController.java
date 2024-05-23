@@ -1,14 +1,8 @@
 package org.sid.secservice.sec.controllers;
-import com.itextpdf.kernel.geom.PageSize;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lowagie.text.DocumentException;
 import org.sid.secservice.sec.dtos.DevisDTO;
 import org.sid.secservice.sec.entities.Devis;
-import org.sid.secservice.sec.entities.Services;
 import org.sid.secservice.sec.services.AccountService;
-import org.sid.secservice.sec.services.DocumentGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -26,9 +20,6 @@ import org.jsoup.nodes.Document;
 import org.xhtmlrenderer.layout.SharedContext;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/devis")

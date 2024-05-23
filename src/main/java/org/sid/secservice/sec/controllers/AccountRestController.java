@@ -1,26 +1,14 @@
 package org.sid.secservice.sec.controllers;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Data;
-import org.sid.secservice.sec.dtos.Historique;
+import org.sid.secservice.sec.dtos.*;
 import org.sid.secservice.sec.entities.*;
 import org.sid.secservice.sec.services.AccountService;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -34,54 +22,7 @@ public class AccountRestController implements WebMvcConfigurer {
     }
 
 
-    @GetMapping(path = "/get-users")
-    @PostAuthorize("hasAuthority('USER')")
-    public List<AppUser> appUsers() {
-        return accountService.listeUser();
-    }
 
-
-
-    @PostMapping(path = "/saveUser")
-    // @PostAuthorize("hasAuthority('ADMIN')")
-    public AppUser saveUser( @RequestBody AppUser appUser){
-        System.out.println(appUser.getUsername());
-        return accountService.addNewUser(appUser);
-    }
-
-    @PostMapping(path = "/deleteUser")
-    @PostAuthorize("hasAuthority('ADMIN')")
-    public void deleteUser( @RequestBody AppUser appUser){
-         accountService.deleteUser(appUser);
-    }
-
-
-    @GetMapping(path = "/userss")
-    @PostAuthorize("hasAuthority('USER')")
-    public Optional<IdUser> appUser(long id){
-        Optional<AppUser> usr = accountService.user(id);   /* Verfied api , it works perfectly */
-        IdUser us = new IdUser();
-        us.setUser(usr.get());
-        us.setId(id);
-        return Optional.of(us);
-    }
-
-    @PostMapping(path = "/upUsers")
-    @PostAuthorize("hasAuthority('ADMIN')")
-    public AppUser updateuser(@RequestBody  AppUser user){
-
-        return accountService.updateUser(user.getId() , user);
-    }
-
-    @PostMapping(path = "/roles")
-    public AppRole saveRole(@RequestBody AppRole appRole){
-        return accountService.addNewRole(appRole);
-    }
-
-    @PostMapping(path = "/addRoleToUser")
-    public void addRoleToUser ( @RequestBody RoleUserForm roleUserForm){
-         accountService.addRoletoUser(roleUserForm.getUsername(),roleUserForm.getRoleName());
-    }
 
     // @GetMapping(path = "/refreshToken")
     // public void refreshToken(HttpServletRequest request , HttpServletResponse response) throws Exception{
@@ -121,24 +62,29 @@ public class AccountRestController implements WebMvcConfigurer {
     // }
 
      @GetMapping(path = "/historique")
-     public List<Historique> historique(Principal principal ){
+     public List<Devis> historique(Principal principal ){
         Optional<AppUser> user = accountService.LoadUserByUsername(principal.getName());
 //         Optional<AppUser> user = accountService.user( id);
          List<Devis> devisList =accountService.listeDevisByclient(user.get());                                       // work with success
-         List<Historique> historiques = new ArrayList<>();
+         /*List<Historique> historiques = new ArrayList<>();
          devisList.forEach(e->{
              Historique htr = new Historique(e.getTitre_devis(),e.getDateCreation(), e.getStatusDevis());
              historiques.add(htr);
-         });
-         return historiques;
+         });*/
+         return /*historiques*/ devisList;
      }
 
-    @GetMapping(path = "/Revision")
-    public List<Packages> Revision(@RequestBody RevisionForm revisionForm){
-      Moteur moteur = accountService.getMoteurByName(revisionForm.getPuissance());                  // working perfectly
-      Voiture voiture = accountService.listVoiture(moteur , revisionForm.getModele());
-      List<Packages> packages = accountService.getPackByTypeNVtr(voiture);
-       return packages;
+//    @GetMapping(path = "/Revision")
+//    public List<Packages> Revision(@RequestBody RevisionForm revisionForm){
+//      Moteur moteur = accountService.getMoteurByName(revisionForm.getPuissance());                  // working perfectly
+//      Voiture voiture = accountService.getVoiture(moteur , revisionForm.getModele());
+//      List<Packages> packages = accountService.getPackByTypeNVtr(voiture , "sdqdsqdqsdsqdsqdqsdq");
+//       return packages;
+//    }
+
+    @GetMapping(path = "/listeService")
+    public List<Services> services (){
+        return accountService.listService();
     }
     @GetMapping(path = "/getDevis")
     public List<Devis> getAllDevis(){
@@ -149,27 +95,56 @@ public class AccountRestController implements WebMvcConfigurer {
         return accountService.listService();
     }
     @GetMapping(path = "/PrixSer")
-    public PrixServices prixservice(){
-        Moteur moteur = accountService.getMoteur(1l).get();
-        Voiture voiture = accountService.listVoiture(moteur , "A3");
-        Optional<Services> services= accountService.getService(1L);
-      return accountService.getPrixServices(voiture, services.get());
+    public List<PrixServices> prixservice(){
+//        Moteur moteur = accountService.getMoteur(1l).get();
+//        Voiture voiture = accountService.getVoiture(moteur , "A3");
+//        Optional<Services> services= accountService.getService(1L);
+//      return accountService.getPrixServices(voiture, services.get());
+        return accountService.prixservices();
     }
-}
-@Data
-class RoleUserForm{
-    private String username;
-    private String roleName;
-}
-@Data
-class RevisionForm{
-    private String username;
-    private String modele;
-    private String puissance ;
-    private List<Services> services;
-}
-@Data
-class IdUser{
-    private long id;
-    private AppUser user;
+    @GetMapping(path = "/PrixMo")
+    public List<Prixmainouevre> prixmainouevres( ){
+        return accountService.getPrixMainOeuvre();
+    }
+    @GetMapping(path = "/Pack")
+    public List<Packages> getpack( ){
+        return accountService.getPack();
+    }
+    @GetMapping(path = "/PackV")
+    public Packages getpackV(@RequestBody Voiture voiture){
+        return accountService.getPackByTypeNVtr(voiture ,"Vidange Simple 10 000KM");
+    }
+
+    @GetMapping(path = "/PreDevis")
+    public PreDevisDTO getPreDevis (@RequestBody ClientDTO client){
+        Moteur moteur = accountService.getMoteurByName(client.getMotorisation());
+        Voiture v = accountService.getVoiture(moteur,client.getModele());
+        Packages pack = accountService.getPackByTypeNVtr(v, client.getKilometrage());
+        PackDTO packDTO = new PackDTO();
+
+        for (Revision r : pack.getRevision()) {
+            RevisionDTO rvsionDTO = new RevisionDTO();
+            PrixServices prixService = accountService.getPrixServices(v,r);
+            rvsionDTO.setId(r.getIdService());
+            rvsionDTO.setNom(r.getNom());
+            rvsionDTO.setCouSer(prixService.getPrixServVoitr());
+            for (MainOeuvre m : r.getMainOeuvre()) {
+                MainOeuvreDTO mainDTO = new MainOeuvreDTO();
+                Prixmainouevre prixmainouevre =accountService.getPrixMainOeuvre(v,m);
+                 mainDTO.setId(prixmainouevre.getIdPrixMO());
+                mainDTO.setNom(prixmainouevre.getMainOeuvre().getNom());
+                mainDTO.setCoutMO(prixmainouevre.getPrixServVoitrMo());
+                rvsionDTO.getMainOeuvre().add(mainDTO);
+            }
+           packDTO.getService().add(rvsionDTO);
+        }
+        packDTO.setId(pack.getCodePack());
+        packDTO.setType(pack.getType());
+        //---------------------------------------------------------
+       // List<RevisionDTO> revisionDTOList= accountService.listSerParV(v);
+        //List des RevionDTO
+        return new PreDevisDTO(packDTO ,null );
+    }
+
+
 }

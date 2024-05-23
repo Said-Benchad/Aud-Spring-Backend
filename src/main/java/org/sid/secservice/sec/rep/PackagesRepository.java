@@ -9,4 +9,5 @@ import java.util.UUID;
 
 public interface PackagesRepository extends JpaRepository<Packages , Long> {
     List<Packages> findByVoiture (Voiture voiture);
+    Packages findFirstByVoitureAndType (Voiture voiture , String Type);
 }
