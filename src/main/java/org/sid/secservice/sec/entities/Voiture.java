@@ -25,8 +25,6 @@ public class Voiture {
     private Moteur moteur;
 //    @OneToMany(mappedBy = "voiture" , fetch = FetchType.LAZY)
 //    private Collection<Devis> devis ;
-    @ManyToOne
-    private AppUser proprietaire; // a discuter had lblan
     @ManyToMany(fetch = FetchType.LAZY)
     @ToString.Exclude
     private Collection<Piece> pieces;

@@ -1,13 +1,12 @@
 package org.sid.secservice.sec.services;
 
 
-import org.sid.secservice.sec.dtos.MainOeuvreDTO;
-import org.sid.secservice.sec.dtos.PackDTO;
-import org.sid.secservice.sec.dtos.RevisionDTO;
+import org.sid.secservice.sec.dtos.*;
 import org.sid.secservice.sec.entities.*;
 import org.sid.secservice.sec.rep.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
@@ -95,6 +94,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public AppRole getRoleByname(String rolename) {
+        return appRoleRepository.findFirstByRoleName(rolename);
+    }
+
+    @Override
     public Optional<AppUser> LoadUserByUsername(String username) {
         return appUserRepository.findFirstByUsername(username);
     }
@@ -135,11 +139,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void deleteVoiture(Voiture voiture) {
+    public void deleteVoiture(Long id) {
 
-        if (voitureRepository.existsById(voiture.getId())) {
+        if (voitureRepository.existsById(id)) {
 
-            voitureRepository.deleteById(voiture.getId());
+            voitureRepository.deleteById(id);
         } else {
 
             throw new EntityNotFoundException("Entity with ID  not found");
@@ -322,8 +326,9 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Moteur addNewMoteur(Moteur moteur) {
-        return moteurRepository.save(moteur);
+    public Moteur addNewMoteur(MoteurDTO moteur) {
+
+        return moteurRepository.save(new Moteur(moteur.getCylindee(), moteur.getPuissance(), moteur.getTypeMotorisation()));
     }
 
     @Override
@@ -389,10 +394,10 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void deleteUser(AppUser appUser) {
-        if (appUserRepository.existsById(appUser.getId())) {
+    public void deleteUser(Long id) {
+        if (appUserRepository.existsById(id)) {
 
-            appUserRepository.deleteById(appUser.getId());
+            appUserRepository.deleteById(id);
         } else {
 
             throw new EntityNotFoundException("Entity with ID  not found");
@@ -408,9 +413,25 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void addVoitureToUser(AppUser appUser, Voiture voiture) {
-        appUser.getVoiture().add(voiture);
+    public List<VoitureDTO> listVoiture(String keyword) {
+        List<VoitureDTO> v = new ArrayList<>();
+       List<Voiture> voitures = voitureRepository.findAllByModeleContaining(keyword);
+       for (Voiture vt: voitures ){
+           v.add( new VoitureDTO(vt.getId(), vt.getModele(), vt.getFinition(), vt.getMoteur().getPuissance()));
+       }
+        return v;
     }
+
+    @Override
+    public List<Moteur> listMoteur() {
+        return moteurRepository.findAll();}
+
+    @Override
+    public Voiture addVoiture(VoitureDTO voitureDTO) {
+        Moteur m = moteurRepository.findByPuissance(voitureDTO.getMoteur());
+        return voitureRepository.save(new Voiture(voitureDTO.getModele(), voitureDTO.getFinition(), m));
+    }
+
 
     @Override
     public void addMoteurToVoiture(Moteur moteur, Voiture voiture) {
@@ -475,7 +496,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public PrixServices getPrixServices(Voiture voiture, Services services) {
-        return prixServicesRepository.findVoitureAndServices(voiture ,services);
+        return prixServicesRepository.findFirstByVoitureAndServices(voiture ,services);
     }
 
     @Override
@@ -495,17 +516,19 @@ public class AccountServiceImpl implements AccountService {
         List<RevisionDTO> revisionDTOList = new ArrayList<>();
         for (Revision r : revisions) {
             RevisionDTO rvsionDTO = new RevisionDTO();
-            PrixServices prixService = prixServicesRepository.findVoitureAndServices(voiture, r);
+            PrixServices prixService = prixServicesRepository.findFirstByVoitureAndServices(voiture, r);
             rvsionDTO.setId(r.getIdService());
             rvsionDTO.setNom(r.getNom());
             rvsionDTO.setCouSer(prixService.getPrixServVoitr());
             for (MainOeuvre m : r.getMainOeuvre()) {
                 MainOeuvreDTO mainDTO = new MainOeuvreDTO();
                 Prixmainouevre prixmainouevre = prixMORepository.findFirstByVoitureAndMainOeuvre(voiture, m);
-                mainDTO.setId(prixmainouevre.getIdPrixMO());
-                mainDTO.setNom(prixmainouevre.getMainOeuvre().getNom());
-                mainDTO.setCoutMO(prixmainouevre.getPrixServVoitrMo());
-                rvsionDTO.getMainOeuvre().add(mainDTO);
+                if (prixmainouevre != null) {
+                    mainDTO.setId(prixmainouevre.getIdPrixMO());
+                    mainDTO.setNom(prixmainouevre.getMainOeuvre().getNom());
+                    mainDTO.setCoutMO(prixmainouevre.getPrixServVoitrMo());
+                    rvsionDTO.getMainOeuvre().add(mainDTO);
+                }
                 revisionDTOList.add(rvsionDTO);
             }
         }
@@ -595,6 +618,12 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Services addservice(Reparation reparation) {
         return servicesRepository.save(reparation);
+    }
+
+    @Override
+    public List<AppUser> searchUser(String keyword) {
+
+        return appUserRepository.userserchead(keyword);
     }
 
 

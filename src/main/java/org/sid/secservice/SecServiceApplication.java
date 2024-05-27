@@ -256,6 +256,7 @@ public class SecServiceApplication {
 //			accountService.addNewDevis(d1);
 		/*	MainOeuvre mainOeuvre = new MainOeuvre(1L,"agent de réduction:vérifier et compléter");
 			accountService.addNewMainOeuvre(mainOeuvre);*/
+			System.out.println(new Date());
 		};
 	}
 }

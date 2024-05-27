@@ -16,4 +16,5 @@ public interface PrixServicesRepository extends JpaRepository<PrixServices,Long>
     @Query("SELECT e FROM PrixServices e WHERE e.voiture = :voiture AND e.services = :services")
    PrixServices findVoitureAndServices(@Param("voiture") Voiture voiture, @Param("services") Services services);
 
+    PrixServices findFirstByVoitureAndServices(Voiture voiture,  Services services);
 }

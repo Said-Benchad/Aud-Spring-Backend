@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor @NoArgsConstructor
-public class ClientDTO {
+public class FormDTO {
     private String firstname;
     private String lastname;
     private String motorisation;

@@ -20,6 +20,8 @@ import org.jsoup.nodes.Document;
 import org.xhtmlrenderer.layout.SharedContext;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/api/devis")
@@ -39,6 +41,14 @@ public class DevisController implements WebMvcConfigurer {
         deviss.setServices(devisDTO.getServices());
         accountService.addNewDevis(deviss);
         model.addAttribute("devis", deviss);
+
+        Date currentDate = new Date();
+
+        // Create SimpleDateFormat instances with the desired formats
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        String formattedDate = dateFormat.format(currentDate);
+        String formattedDateTime = dateTimeFormat.format(currentDate);
 
         // Chemin du fichier HTML personnalisé
         String fileName = "devis-" + deviss.getCode_devis() + ".html";
@@ -61,7 +71,7 @@ public class DevisController implements WebMvcConfigurer {
                 "    <div class=\"a2\">\n" +
                 "      <div class=\"a3\">\n" +
                 "        <h2>Devis Service DS24-010828</h2>\n" +
-                "        <p>Date 03/05/24 10:54:24</p>\n" +
+                "        <p>Date "+formattedDateTime+"</p>\n" +
                 "        <p>page 1</p>\n" +
                 "      </div>\n" +
                 "    </div>\n" +
@@ -69,7 +79,7 @@ public class DevisController implements WebMvcConfigurer {
                 "      <div class=\"a4\">\n" +
                 "        <div>\n" +
                 "          <div>\n" +
-                "            <p>code client CL21858</p>\n" +
+                "            <p>CL21858</p>\n" +
                 "            <p>MADEC</p>\n" +
                 "            <p>ICE: 001224566287931101</p>\n" +
                 "            <p>RTE D'EL JADIDA LISSASFA</p>\n" +
@@ -91,9 +101,9 @@ public class DevisController implements WebMvcConfigurer {
                 "              </td>\n" +
                 "              <td>\n" +
                 "                <div>\n" +
-                "                  <div class=\"first\"><b>N° Immatriculation</b></div>\n" +
+                "                  <div class=\"first\"><b>Type</b></div>\n" +
                 "                  <div class=\"second\">\n" +
-                "                    <span>71300-H-1</span>\n" +
+                "                    <span>A5 --IMPORTE--</span>\n" +
                 "                  </div>\n" +
                 "                </div>\n" +
                 "              </td>\n" +
@@ -111,7 +121,7 @@ public class DevisController implements WebMvcConfigurer {
                 "                <div>\n" +
                 "                  <div class=\"first\"><b>Livré le</b></div>\n" +
                 "                  <div class=\"second\">\n" +
-                "                    <span>18/07/2017</span>\n" +
+                "                    <span>"+formattedDate+"</span>\n" +
                 "                  </div>\n" +
                 "                </div>\n" +
                 "              </td>\n" +
@@ -127,9 +137,9 @@ public class DevisController implements WebMvcConfigurer {
                 "              </td>\n" +
                 "              <td>\n" +
                 "                <div>\n" +
-                "                  <div class=\"first\"><b>Type</b></div>\n" +
+                "                  <div class=\"first\"><b>N° Immatriculation</b></div>\n" +
                 "                  <div class=\"second\">\n" +
-                "                    <span>A5 --IMPORTE--</span>\n" +
+                "                    <span>71300-H-1</span>\n" +
                 "                  </div>\n" +
                 "                </div>\n" +
                 "              </td>\n" +
@@ -164,7 +174,7 @@ public class DevisController implements WebMvcConfigurer {
                 "                <div>\n" +
                 "                  <div class=\"first\"><b>Du</b></div>\n" +
                 "                  <div class=\"second\">\n" +
-                "                    <span>03/05/2024</span>\n" +
+                "                    <span>"+formattedDate+"</span>\n" +
                 "                  </div>\n" +
                 "                </div>\n" +
                 "              </td>\n" +
@@ -253,7 +263,7 @@ public class DevisController implements WebMvcConfigurer {
                 "            <td colspan=\"6\">\n" +
                 "              <div>\n" +
                 "                <b>Sous total : </b>\n" +
-                "                <b>654.50</b>\n" +
+                "                <b style=\"margin-left: 566px\">654.50</b>\n" +
                 "              </div>\n" +
                 "            </td>\n" +
                 "          </tr>\n" +
@@ -261,17 +271,17 @@ public class DevisController implements WebMvcConfigurer {
                 "            <td>\n" +
                 "              <div>8w6825208B</div>\n" +
                 "              <div>8W68252067</div>\n" +
-                "              <div style=\"height: 400px\"></div>\n" +
+                "              <div style=\"height: 300px\"></div>\n" +
                 "            </td>\n" +
                 "            <td>\n" +
                 "              <div>REVETEMENT DE SOUBASSEMENT D</div>\n" +
                 "              <div>CARENAGE DE DESOUS DE CAISE</div>\n" +
-                "              <div style=\"height: 400px\"></div>\n" +
+                "              <div style=\"height: 300px\"></div>\n" +
                 "            </td>\n" +
                 "            <td>\n" +
                 "              <div>1,00</div>\n" +
                 "              <div>4,00</div>\n" +
-                "              <div style=\"height: 400px\"></div>\n" +
+                "              <div style=\"height: 300px\"></div>\n" +
                 "            </td>\n" +
                 "            <td>\n" +
                 "              <div></div>\n" +
@@ -279,12 +289,12 @@ public class DevisController implements WebMvcConfigurer {
                 "            <td>\n" +
                 "              <div>90,95</div>\n" +
                 "              <div>1578,78</div>\n" +
-                "              <div style=\"height: 400px\"></div>\n" +
+                "              <div style=\"height: 300px\"></div>\n" +
                 "            </td>\n" +
                 "            <td>\n" +
                 "              <div>363,81</div>\n" +
                 "              <div>1578,78</div>\n" +
-                "              <div style=\"height: 400px\"></div>\n" +
+                "              <div style=\"height: 300px\"></div>\n" +
                 "            </td>\n" +
                 "          </tr>\n" +
                 "          <tr>\n" +
@@ -293,6 +303,63 @@ public class DevisController implements WebMvcConfigurer {
                 "                <b>Sous total : </b>\n" +
                 "                <b style=\"margin-left: 566px\">654.50</b>\n" +
                 "              </div>\n" +
+                "            </td>\n" +
+                "          </tr>\n" +
+                "        </table>\n" +
+                "      </div>\n" +
+                "    </div>\n" +
+                "    <div>\n" +
+                "      <div class=\"a10\">\n" +
+                "        <table>\n" +
+                "          <tr>\n" +
+                "            <td>\n" +
+                "              <div><b>Identificant TVA</b></div>\n" +
+                "            </td>\n" +
+                "            <td>\n" +
+                "              <div><b>% TVA</b></div>\n" +
+                "            </td>\n" +
+                "            <td>\n" +
+                "              <div><b>Montant HT</b></div>\n" +
+                "            </td>\n" +
+                "            <td>\n" +
+                "              <div><b>Montant TVA</b></div>\n" +
+                "            </td>\n" +
+                "            <td>\n" +
+                "              <div><b>Total TTC</b></div>\n" +
+                "            </td>\n" +
+                "          </tr>\n" +
+                "          <tr>\n" +
+                "            <td>\n" +
+                "              <div>TVA20</div>\n" +
+                "            </td>\n" +
+                "            <td>\n" +
+                "              <div>20</div>\n" +
+                "            </td>\n" +
+                "            <td>\n" +
+                "              <div>4655.03</div>\n" +
+                "            </td>\n" +
+                "            <td>\n" +
+                "              <div>931.20</div>\n" +
+                "            </td>\n" +
+                "            <td>\n" +
+                "              <div>5587.16</div>\n" +
+                "            </td>\n" +
+                "          </tr>\n" +
+                "          <tr>\n" +
+                "            <td>\n" +
+                "              <div></div>\n" +
+                "            </td>\n" +
+                "            <td>\n" +
+                "              <div></div>\n" +
+                "            </td>\n" +
+                "            <td>\n" +
+                "              <div><b>4655.03</b></div>\n" +
+                "            </td>\n" +
+                "            <td>\n" +
+                "              <div><b>931.20</b></div>\n" +
+                "            </td>\n" +
+                "            <td>\n" +
+                "              <div><b>5587.16</b></div>\n" +
                 "            </td>\n" +
                 "          </tr>\n" +
                 "        </table>\n" +

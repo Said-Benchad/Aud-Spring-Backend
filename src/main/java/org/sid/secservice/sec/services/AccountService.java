@@ -1,8 +1,11 @@
 package org.sid.secservice.sec.services;
 
+import org.sid.secservice.sec.dtos.MoteurDTO;
 import org.sid.secservice.sec.dtos.RevisionDTO;
+import org.sid.secservice.sec.dtos.VoitureDTO;
 import org.sid.secservice.sec.entities.*;
 import org.springframework.data.repository.query.RepositoryQuery;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,12 +14,13 @@ public interface AccountService {
     AppUser updateUser(Long id , AppUser user);
     AppRole addNewRole( AppRole appRole);
     void addRoletoUser(String username ,String roleName );
+    AppRole getRoleByname(String rolename);
     Optional<AppUser> LoadUserByUsername( String username);
     List<AppUser> listeUser();
     List<Devis> listeDevisByclient(AppUser user);
     Voiture addNewVoiture(Voiture voiture);
     Voiture updateVoiture ( Long id , Voiture voiture);
-    void deleteVoiture(Voiture voiture);
+    void deleteVoiture(Long id);
     Services updateService( Long id , Services services);
     void deleteService (Services services);
     Devis addNewDevis(Devis devis);
@@ -33,18 +37,20 @@ public interface AccountService {
     Packages addNewPack (Packages packages);
     Packages updatePack(Long id ,Packages packages);
     void deletePack (Packages packages);
-    Moteur addNewMoteur (Moteur moteur);
+    Moteur addNewMoteur (MoteurDTO moteur);
     Moteur updateMoteur(Long id , Moteur moteur);
     void deleteMoteur (Moteur moteur);
     Employe addNewEmploye ( Employe employe);
     Employe updateEmploye ( Long id , Employe eploye);
     void deleteEmploye (Employe employe);
-    void deleteUser (AppUser appUser );
+    void deleteUser (Long id );
 
     Optional<AppUser> user(Long id);
 
 
-    void addVoitureToUser(AppUser appUser , Voiture voiture);
+    List<VoitureDTO>listVoiture(String keyword);
+    List<Moteur>listMoteur();
+    Voiture addVoiture(VoitureDTO voitureDTO);
     void addMoteurToVoiture(Moteur moteur , Voiture voiture);
     void addVoitureToDevis(Voiture voiture , Devis devis);
     void addVoitureToPack ( Long id, Packages pack);
@@ -77,4 +83,5 @@ public interface AccountService {
     Services addservice( Revision revision);
 Services addservice(Reparation reparation);
 
+    List<AppUser> searchUser(String keyword);
 }

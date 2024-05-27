@@ -3,7 +3,6 @@ package org.sid.secservice.sec.controllers;
 import org.sid.secservice.sec.dtos.*;
 import org.sid.secservice.sec.entities.*;
 import org.sid.secservice.sec.services.AccountService;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -15,7 +14,7 @@ import java.util.*;
 @RequestMapping("/api/test")
 
 public class AccountRestController implements WebMvcConfigurer {
-    
+
     private final AccountService accountService;
     public AccountRestController(AccountService accountService) {
         this.accountService = accountService;
@@ -116,7 +115,7 @@ public class AccountRestController implements WebMvcConfigurer {
     }
 
     @GetMapping(path = "/PreDevis")
-    public PreDevisDTO getPreDevis (@RequestBody ClientDTO client){
+    public PreDevisDTO getPreDevis (@RequestBody FormDTO client){
         Moteur moteur = accountService.getMoteurByName(client.getMotorisation());
         Voiture v = accountService.getVoiture(moteur,client.getModele());
         Packages pack = accountService.getPackByTypeNVtr(v, client.getKilometrage());
@@ -141,10 +140,65 @@ public class AccountRestController implements WebMvcConfigurer {
         packDTO.setId(pack.getCodePack());
         packDTO.setType(pack.getType());
         //---------------------------------------------------------
-       // List<RevisionDTO> revisionDTOList= accountService.listSerParV(v);
+        List<RevisionDTO> revisionDTOList= accountService.listSerParV(v);
         //List des RevionDTO
-        return new PreDevisDTO(packDTO ,null );
+        return new PreDevisDTO(packDTO ,revisionDTOList );
     }
+
+    @GetMapping(path = "/ListVoiture/search")
+    public List<VoitureDTO> getVoiture( @RequestParam(name = "keyword",defaultValue = "") String keyword){
+        return accountService.listVoiture(keyword);
+    }
+    @GetMapping(path = "/ListMoteur")
+    public List<Moteur> getMoteur( ){
+        return accountService.listMoteur();
+    }
+    @PostMapping(path = "/saveVoiture")
+    // @PostAuthorize("hasAuthority('ADMIN')")
+    public Voiture saveUser( @RequestBody VoitureDTO voitureDTO){
+
+        return accountService.addVoiture(voitureDTO);
+    }
+    @DeleteMapping(path = "/deleteVoiture/{id}")
+    public void deleteVoiture(@PathVariable Long id ){
+        accountService.deleteVoiture(id);
+    }
+
+    @PostMapping(path = "/saveMoteur")
+    // @PostAuthorize("hasAuthority('ADMIN')")
+    public Moteur saveMoteur( @RequestBody MoteurDTO moteurDTO){
+
+        return accountService.addNewMoteur(moteurDTO);
+    }
+
+    @GetMapping(path = "/ListMoteurPuissance")
+    public List<String> getMoteurbyPuissance( ){
+        List<Moteur> m = accountService.listMoteur();
+        List<String>motorisation = new ArrayList<>();
+        m.forEach(moteur -> {
+            motorisation.add(moteur.getPuissance());
+        });
+        return motorisation;
+    }
+    @GetMapping(path = "/ListModele")
+    public List<String> getModele( ){
+        List<VoitureDTO> v = accountService.listVoiture("");
+        List<String>modele = new ArrayList<>();
+        v.forEach(voitureDTO -> {
+            modele.add(voitureDTO.getModele());
+        });
+        return modele;
+    }
+    @GetMapping(path = "/ListPackType")
+    public List<String> getPackType( ){
+        List<Packages> v = accountService.getPack();
+        List<String>type = new ArrayList<>();
+        v.forEach(pack -> {
+            type.add(pack.getType());
+        });
+        return type;
+    }
+
 
 
 }
