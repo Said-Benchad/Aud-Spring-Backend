@@ -2,11 +2,19 @@ package org.sid.secservice.sec.controllers;
 import com.lowagie.text.DocumentException;
 import org.sid.secservice.sec.dtos.DevisDTO;
 import org.sid.secservice.sec.entities.Devis;
+import org.sid.secservice.sec.entities.Revision;
+import org.sid.secservice.sec.entities.Services;
 import org.sid.secservice.sec.services.AccountService;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.xhtmlrenderer.pdf.ITextRenderer;
+
+
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 
 import java.io.File;
@@ -20,6 +28,8 @@ import org.jsoup.nodes.Document;
 import org.xhtmlrenderer.layout.SharedContext;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -53,6 +63,22 @@ public class DevisController implements WebMvcConfigurer {
         // Chemin du fichier HTML personnalisé
         String fileName = "devis-" + deviss.getCode_devis() + ".html";
         File file = new File("src/main/resources/storage", fileName);
+
+        StringBuffer ref1 = new StringBuffer();
+        StringBuffer des1= new StringBuffer();
+        StringBuffer quan1 = new StringBuffer();
+        StringBuffer remise1 = new StringBuffer();
+        StringBuffer prixUnitaire1 = new StringBuffer();
+        StringBuffer ref2 = new StringBuffer();
+        StringBuffer des2= new StringBuffer();
+        StringBuffer quan2 = new StringBuffer();
+        StringBuffer remise2 = new StringBuffer();
+        StringBuffer prixUnitaire2 = new StringBuffer();
+        StringBuffer MTHT2 = new StringBuffer();
+        for(Services service : devisDTO.getDevis().getServices()){
+            ref1.append("<div>"+service+"</div>\n");
+
+        }
 
         String html ="<!DOCTYPE html>\n" +
                 "<html lang=\"fr\">\n" +
@@ -234,31 +260,7 @@ public class DevisController implements WebMvcConfigurer {
                 "              <div><b>Montant HT</b></div>\n" +
                 "            </td>\n" +
                 "          </tr>\n" +
-                "          <tr>\n" +
-                "            <td>\n" +
-                "              <div>54254625</div>\n" +
-                "              <div>qsdqsdqs625</div>\n" +
-                "            </td>\n" +
-                "            <td>\n" +
-                "              <div>Revétement centre déposer et reposer</div>\n" +
-                "              <div>Cache:déposer et reposer</div>\n" +
-                "            </td>\n" +
-                "            <td>\n" +
-                "              <div>150,00</div>\n" +
-                "              <div>60,00</div>\n" +
-                "            </td>\n" +
-                "            <td>\n" +
-                "              <div></div>\n" +
-                "            </td>\n" +
-                "            <td>\n" +
-                "              <div>3,10</div>\n" +
-                "              <div>3,30</div>\n" +
-                "            </td>\n" +
-                "            <td>\n" +
-                "              <div>465,00</div>\n" +
-                "              <div>198,00</div>\n" +
-                "            </td>\n" +
-                "          </tr>\n" +
+//here was the list of mainoeuvre
                 "          <tr>\n" +
                 "            <td colspan=\"6\">\n" +
                 "              <div>\n" +
@@ -378,7 +380,7 @@ public class DevisController implements WebMvcConfigurer {
         File htmlFile = new File(htmlFilePath);
         Document doc = Jsoup.parse(htmlFile, "UTF-8");
         doc.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
-        try (OutputStream os = new FileOutputStream(pdfFilePath)) {
+        try (OutputStream os = Files.newOutputStream(Paths.get(pdfFilePath))) {
             ITextRenderer renderer = new ITextRenderer();
             SharedContext cntxt = renderer.getSharedContext();
             cntxt.setPrint(true);
@@ -400,5 +402,27 @@ public class DevisController implements WebMvcConfigurer {
         } catch (DocumentException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @GetMapping("/get-pdf/{fileName}")
+    public ResponseEntity<InputStreamResource> getPDF(@PathVariable String fileName) throws IOException {
+        String pdfFilePath = "src/main/resources/storage/" + fileName;
+        File pdfFile = new File(pdfFilePath);
+
+        if (!pdfFile.exists()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        FileInputStream fileInputStream = new FileInputStream(pdfFile);
+        InputStreamResource resource = new InputStreamResource(fileInputStream);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + fileName);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(pdfFile.length())
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(resource);
     }
 }

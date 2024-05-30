@@ -11,6 +11,7 @@ public interface VoitureRepository extends JpaRepository<Voiture,Long> {
     Optional<Voiture> findById(Long id);
 
     Voiture findByModeleAndMoteur(String modele, Moteur moteur);
+    List<Voiture>findAllByModeleAndFinition(String modele , String finition);
 
     List<Voiture> findAllByMoteur(Moteur moteur);
     List<Voiture> findAllByModeleContaining(String keyword);

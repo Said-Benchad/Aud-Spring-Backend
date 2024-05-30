@@ -32,7 +32,7 @@ public class SecServiceApplication {
 	@Bean
 	CommandLineRunner start(AccountService accountService){
 		return args -> {
-//			 AppUser user = new AppUser("wassimm","Wassim" ,"wassimASDSJDSs@gmail.com");
+//			 AppUser user = new AppUser("WASSIMMM","WASSIMMM" ,"wassimASDSJDSs@gmail.com");
 //			 accountService.addNewUser(user);
 // 		 	accountService.addNewRole(new AppRole(null, "USER"));
 // 		 	accountService.addNewRole(new AppRole(null, "ADMIN"));
@@ -65,7 +65,7 @@ public class SecServiceApplication {
  		 /*	Moteur m1 = new Moteur(1L,"2,0L", "150 S-Tronic", "TDI");
 			  accountService.addNewMoteur(m1);*/
 // 		 	accountService.addNewMoteur(m1);
- 		 	Moteur m2 = new Moteur("2,0L", "163 S-Tronic", "TDI");
+ 		 //	Moteur m2 = new Moteur("2,0L", "163 S-Tronic", "TDI");
 // 		 	accountService.addNewMoteur(m2);
 // 		 	Moteur m3 = new Moteur("2,0L", "204 S-Tronic", "TDI");
 // 		 	accountService.addNewMoteur(m3);

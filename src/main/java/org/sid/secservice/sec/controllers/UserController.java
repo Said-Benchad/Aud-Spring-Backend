@@ -8,6 +8,7 @@ import org.sid.secservice.sec.services.AccountService;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,7 +17,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/api/user")
-public class UserController {
+public class UserController implements WebMvcConfigurer {
     private final AccountService accountService;
     private PasswordEncoder passwordEncoder;
 
@@ -82,7 +83,7 @@ public class UserController {
 
 
 
-        return accountService.addNewUser(new AppUser(null, userDto.getFirstname(), userDto.getLastname(),null, userDto.getEmail(), userDto.getPassword(),role ));
+        return accountService.addNewUser(new AppUser(null, userDto.getFirstname(), userDto.getLastname(),null, userDto.getUsername(), userDto.getPassword(),role ));
     }
 
     @DeleteMapping(path = "/deleteUser/{id}")

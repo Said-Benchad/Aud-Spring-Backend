@@ -187,8 +187,33 @@ public class AccountRestController implements WebMvcConfigurer {
         v.forEach(voitureDTO -> {
             modele.add(voitureDTO.getModele());
         });
-        return modele;
+        return removeDuplicates(modele);
     }
+    public static <T> List<T> removeDuplicates(List<T> list) {
+        Set<T> set = new HashSet<>(list);
+        return new ArrayList<>(set);
+    }
+    @GetMapping(path = "/ListFinition")
+    public List<String> getfinition( String modele){
+        List<VoitureDTO> v = accountService.listVoiture(modele);
+        List<String>m = new ArrayList<>();
+        v.forEach(voitureDTO -> {
+            m.add(voitureDTO.getFinition());
+        });
+        return removeDuplicates(m);
+    }
+
+    @GetMapping(path = "/ListMotrorisation")
+    public List<String> getMotorisation( String modele ,String finition){
+        List<VoitureDTO> v = accountService.listVoiture(modele ,finition);
+        List<String>m = new ArrayList<>();
+        v.forEach(voitureDTO -> {
+            m.add(voitureDTO.getMoteur());
+        });
+        return removeDuplicates(m);
+    }
+
+
     @GetMapping(path = "/ListPackType")
     public List<String> getPackType( ){
         List<Packages> v = accountService.getPack();

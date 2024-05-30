@@ -49,6 +49,7 @@ public interface AccountService {
 
 
     List<VoitureDTO>listVoiture(String keyword);
+    List<VoitureDTO>listVoiture(String modele , String finition);
     List<Moteur>listMoteur();
     Voiture addVoiture(VoitureDTO voitureDTO);
     void addMoteurToVoiture(Moteur moteur , Voiture voiture);

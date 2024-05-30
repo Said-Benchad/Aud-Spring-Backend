@@ -423,6 +423,16 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public List<VoitureDTO> listVoiture(String modele, String finition) {
+        List<VoitureDTO> v = new ArrayList<>();
+        List<Voiture> voitures = voitureRepository.findAllByModeleAndFinition(modele,finition);
+        for (Voiture vt: voitures ){
+            v.add( new VoitureDTO(vt.getId(), vt.getModele(), vt.getFinition(), vt.getMoteur().getPuissance()));
+        }
+        return v;
+    }
+
+    @Override
     public List<Moteur> listMoteur() {
         return moteurRepository.findAll();}
 
