@@ -1,10 +1,12 @@
 package org.sid.secservice.sec.controllers;
 import com.lowagie.text.DocumentException;
 import org.sid.secservice.sec.dtos.DevisDTO;
-import org.sid.secservice.sec.entities.Devis;
-import org.sid.secservice.sec.entities.Revision;
-import org.sid.secservice.sec.entities.Services;
+import org.sid.secservice.sec.dtos.MainOeuvreDTO;
+import org.sid.secservice.sec.dtos.RevisionDTO;
+import org.sid.secservice.sec.entities.*;
 import org.sid.secservice.sec.services.AccountService;
+import org.sid.secservice.sec.services.UserDetailServiceImpl;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -30,8 +32,12 @@ import org.xhtmlrenderer.layout.SharedContext;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.Principal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/devis")
@@ -40,15 +46,25 @@ public class DevisController implements WebMvcConfigurer {
     private final AccountService accountService;
 
 
-    public DevisController(AccountService accountService) {
+
+    public DevisController(AccountService accountService, UserDetailServiceImpl userDetailService) {
         this.accountService = accountService;
     }
 
     @PostMapping("/generer-devis")//done
-    public String genererDevis(@RequestBody DevisDTO devisDTO, Model model) throws IOException {
+    public String genererDevis(@RequestBody DevisDTO devisDTO, Model model, Principal principal) throws IOException {
+        Optional<AppUser> user = accountService. LoadUserByUsername(principal.getName());
+        Moteur m = accountService.getMoteurByName(devisDTO.getMotorisation());
+        Voiture voiture= accountService.getVoiture(m,devisDTO.getModele());
+        List<Services> services = new ArrayList<>();
+        devisDTO.getServices().forEach(e -> {
+            System.out.println(e.getId());
+            Optional<Services> optionalService = accountService.getService(e.getId());
+            optionalService.ifPresent(services::add);
+        });
 
-        Devis deviss = devisDTO.getDevis();
-        deviss.setServices(devisDTO.getServices());
+        Devis deviss = new Devis(null,null,user.get(),voiture,new Date(),services , devisDTO.getCout());
+        deviss.setTitre_devis(devisDTO.getFirstName()+"_"+devisDTO.getLastName()+"_"+devisDTO.getTypePack().split(" ")[1]);
         accountService.addNewDevis(deviss);
         model.addAttribute("devis", deviss);
 
@@ -61,7 +77,7 @@ public class DevisController implements WebMvcConfigurer {
         String formattedDateTime = dateTimeFormat.format(currentDate);
 
         // Chemin du fichier HTML personnalisé
-        String fileName = "devis-" + deviss.getCode_devis() + ".html";
+        String fileName = deviss.getTitre_devis()+ ".html";
         File file = new File("src/main/resources/storage", fileName);
 
         StringBuffer ref1 = new StringBuffer();
@@ -74,12 +90,33 @@ public class DevisController implements WebMvcConfigurer {
         StringBuffer quan2 = new StringBuffer();
         StringBuffer remise2 = new StringBuffer();
         StringBuffer prixUnitaire2 = new StringBuffer();
-        StringBuffer MTHT2 = new StringBuffer();
-        for(Services service : devisDTO.getDevis().getServices()){
-            ref1.append("<div>"+service+"</div>\n");
+        double MTHT2 =0;
+        double MTHT1 =0;
+        double total;
+        int padding=300;
+        List<RevisionDTO> r = accountService.listSerParV(voiture);
+        for(RevisionDTO service : devisDTO.getServices()){
+            padding-=12;
+            for (MainOeuvreDTO mainOeuvreDTO : service.getMainOeuvre()){
+                padding-=12;
 
+                ref2.append("<div>"+mainOeuvreDTO.getId()+"</div>\n");
+                des2.append("<div>"+mainOeuvreDTO.getNom()+"</div>\n");
+                quan2.append("<div>"+mainOeuvreDTO.getId()+"</div>\n");
+                remise2.append("<div>"+mainOeuvreDTO.getId()+"</div>\n");
+                prixUnitaire2.append("<div>"+mainOeuvreDTO.getCoutMO()+"</div>\n");
+                MTHT2+=mainOeuvreDTO.getCoutMO();
+            }
+
+            ref1.append("<div>"+service.getId()+"</div>\n");
+            des1.append("<div>"+service.getNom()+"</div>\n");
+            quan1.append("<div>"+service.getId()+"</div>\n");
+            remise1.append("<div>"+service.getId()+"</div>\n");
+            prixUnitaire1.append("<div>"+service.getCouSer()+"</div>\n");
+            MTHT1+=service.getCouSer();
         }
-
+        total=MTHT2+MTHT1;
+        double ht = total+ total*0.2;
         String html ="<!DOCTYPE html>\n" +
                 "<html lang=\"fr\">\n" +
                 "  <head>\n" +
@@ -96,7 +133,7 @@ public class DevisController implements WebMvcConfigurer {
                 "    </div>\n" +
                 "    <div class=\"a2\">\n" +
                 "      <div class=\"a3\">\n" +
-                "        <h2>Devis Service DS24-010828</h2>\n" +
+                "        <h2>"+deviss.getTitre_devis()+"</h2>\n" +
                 "        <p>Date "+formattedDateTime+"</p>\n" +
                 "        <p>page 1</p>\n" +
                 "      </div>\n" +
@@ -109,7 +146,7 @@ public class DevisController implements WebMvcConfigurer {
                 "            <p>MADEC</p>\n" +
                 "            <p>ICE: 001224566287931101</p>\n" +
                 "            <p>RTE D'EL JADIDA LISSASFA</p>\n" +
-                "            <p>KM N° 10.5</p>\n" +
+                "            <p>"+ devisDTO.getTypePack()+"</p>\n" +
                 "          </div>\n" +
                 "        </div>\n" +
                 "      </div>\n" +
@@ -129,7 +166,7 @@ public class DevisController implements WebMvcConfigurer {
                 "                <div>\n" +
                 "                  <div class=\"first\"><b>Type</b></div>\n" +
                 "                  <div class=\"second\">\n" +
-                "                    <span>A5 --IMPORTE--</span>\n" +
+                "                    <span>"+voiture.getModele()+voiture.getFinition()+"</span>\n" +
                 "                  </div>\n" +
                 "                </div>\n" +
                 "              </td>\n" +
@@ -260,50 +297,63 @@ public class DevisController implements WebMvcConfigurer {
                 "              <div><b>Montant HT</b></div>\n" +
                 "            </td>\n" +
                 "          </tr>\n" +
-//here was the list of mainoeuvre
+                "          <tr>\n" +
+                "            <td>\n" +
+                ref2+
+                "            </td>\n" +
+                "            <td>\n" +
+                des2+
+                "            </td>\n" +
+                "            <td>\n" +
+                quan2+
+                "            </td>\n" +
+                "            <td>\n" +
+                "            </td>\n" +
+                "            <td>\n" +
+                quan2+
+                "            </td>\n" +
+                "            <td>\n" +
+                prixUnitaire2+
+                "            </td>\n" +
+                "          </tr>\n" +
                 "          <tr>\n" +
                 "            <td colspan=\"6\">\n" +
                 "              <div>\n" +
                 "                <b>Sous total : </b>\n" +
-                "                <b style=\"margin-left: 566px\">654.50</b>\n" +
+                "                <b style=\"margin-left: 566px\">"+ String.format("%.2f", MTHT2) +"</b>\n" +
                 "              </div>\n" +
                 "            </td>\n" +
                 "          </tr>\n" +
                 "          <tr>\n" +
                 "            <td>\n" +
-                "              <div>8w6825208B</div>\n" +
-                "              <div>8W68252067</div>\n" +
-                "              <div style=\"height: 300px\"></div>\n" +
+                ref1+
+                "              <div style=\"height: "+String.valueOf(padding)+"px\"></div>\n" +
                 "            </td>\n" +
                 "            <td>\n" +
-                "              <div>REVETEMENT DE SOUBASSEMENT D</div>\n" +
-                "              <div>CARENAGE DE DESOUS DE CAISE</div>\n" +
-                "              <div style=\"height: 300px\"></div>\n" +
+                des2+
+                "              <div style=\"height:"+String.valueOf(padding)+"px\"></div>\n" +
                 "            </td>\n" +
                 "            <td>\n" +
-                "              <div>1,00</div>\n" +
-                "              <div>4,00</div>\n" +
-                "              <div style=\"height: 300px\"></div>\n" +
+                quan1+
+                "              <div style=\"height: "+String.valueOf(padding)+"px\"></div>\n" +
                 "            </td>\n" +
                 "            <td>\n" +
                 "              <div></div>\n" +
                 "            </td>\n" +
                 "            <td>\n" +
-                "              <div>90,95</div>\n" +
-                "              <div>1578,78</div>\n" +
-                "              <div style=\"height: 300px\"></div>\n" +
+                quan1+
+                "              <div style=\"height: "+String.valueOf(padding)+"px\"></div>\n" +
                 "            </td>\n" +
                 "            <td>\n" +
-                "              <div>363,81</div>\n" +
-                "              <div>1578,78</div>\n" +
-                "              <div style=\"height: 300px\"></div>\n" +
+                prixUnitaire1+
+                "              <div style=\"height: "+String.valueOf(padding)+"px\"></div>\n" +
                 "            </td>\n" +
                 "          </tr>\n" +
                 "          <tr>\n" +
                 "            <td colspan=\"6\">\n" +
                 "              <div>\n" +
                 "                <b>Sous total : </b>\n" +
-                "                <b style=\"margin-left: 566px\">654.50</b>\n" +
+                "                <b style=\"margin-left: 566px\">"+String.format("%.2f", MTHT1)+"</b>\n" +
                 "              </div>\n" +
                 "            </td>\n" +
                 "          </tr>\n" +
@@ -338,13 +388,13 @@ public class DevisController implements WebMvcConfigurer {
                 "              <div>20</div>\n" +
                 "            </td>\n" +
                 "            <td>\n" +
-                "              <div>4655.03</div>\n" +
+                "              <div>"+total+"</div>\n" +
                 "            </td>\n" +
                 "            <td>\n" +
-                "              <div>931.20</div>\n" +
+                "              <div>"+String.valueOf(ht-total)+"</div>\n" +
                 "            </td>\n" +
                 "            <td>\n" +
-                "              <div>5587.16</div>\n" +
+                "              <div>"+ht+"</div>\n" +
                 "            </td>\n" +
                 "          </tr>\n" +
                 "          <tr>\n" +
@@ -355,13 +405,13 @@ public class DevisController implements WebMvcConfigurer {
                 "              <div></div>\n" +
                 "            </td>\n" +
                 "            <td>\n" +
-                "              <div><b>4655.03</b></div>\n" +
+                "              <div><b>"+total+"</b></div>\n" +
                 "            </td>\n" +
                 "            <td>\n" +
-                "              <div><b>931.20</b></div>\n" +
+                "              <div><b>"+String.valueOf(ht-total)+"</b></div>\n" +
                 "            </td>\n" +
                 "            <td>\n" +
-                "              <div><b>5587.16</b></div>\n" +
+                "              <div><b>"+ht+"</b></div>\n" +
                 "            </td>\n" +
                 "          </tr>\n" +
                 "        </table>\n" +
@@ -392,13 +442,11 @@ public class DevisController implements WebMvcConfigurer {
 
             renderer.layout();
             renderer.createPDF(os);
-            System.out.println("done");
             if (htmlFile.exists()) {
                 htmlFile.delete();
             }
 
-
-            return "redirect:/api/devis/convertir-pdf/" + fileName;
+            return  fileName;
         } catch (DocumentException e) {
             throw new RuntimeException(e);
         }

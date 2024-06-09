@@ -13,6 +13,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DevisDTO {
-    private Devis devis ;
-    private List<Services> services;
+    private String firstName;
+    private String LastName;
+    private String modele;
+    private String motorisation;
+    private String typePack;
+    private List<RevisionDTO> services;
+    private double cout;
 }

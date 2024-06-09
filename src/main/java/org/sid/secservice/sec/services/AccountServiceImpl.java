@@ -86,9 +86,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void addRoletoUser(String username, String roleName) {
     Optional<AppUser> appUser = appUserRepository.findFirstByUsername(username);
-    System.out.println(appUser);
     AppRole appRole = appRoleRepository.findFirstByRoleName(roleName);
-    System.out.println(appRole);
     appUser.get().getAppRole().add(appRole);
         appUserRepository.save(appUser.get());
     }
@@ -110,7 +108,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public List<Devis> listeDevisByclient(AppUser user) {
-        return devisRepository.findAllByClient(user);
+        return devisRepository.findAllByAppUser(user);
     }
 
     @Override
@@ -192,12 +190,7 @@ public class AccountServiceImpl implements AccountService {
 
         if (devis1.isPresent()) {
             Devis existingEntity = devis1.get();
-
             existingEntity.setTitre_devis(devis.getTitre_devis());
-            existingEntity.setStatusDevis(devis.getStatusDevis());//statu
-            existingEntity.setDescription(devis.getDescription());//desc
-            existingEntity.setClient(devis.getClient());//client
-            existingEntity.setDateModif(new Date());
             return devisRepository.save(existingEntity);
         } else {
             throw new EntityNotFoundException("Entity not found");
@@ -454,10 +447,6 @@ public class AccountServiceImpl implements AccountService {
         devis.setVoiture(voiture);
     }
 
-    @Override
-    public void addEmployeToDevis(Employe employe, Devis devis) {
-        devis.getEmployes().add(employe);
-    }
 
     @Override
     public void addPieceToVoiture(Piece p, Voiture v) {
@@ -499,6 +488,12 @@ public class AccountServiceImpl implements AccountService {
         montant = 1218.45 ;
         pack.setCout(montant);
         }
+
+    @Override
+    public Prixmainouevre addNewPrixMain(Prixmainouevre prixmainouevre) {
+        return prixMORepository.save(prixmainouevre);
+    }
+
     @Override
     public PrixServices addNewPrixSer(PrixServices prixServices) {
         return prixServicesRepository.save(prixServices);
@@ -571,6 +566,11 @@ public class AccountServiceImpl implements AccountService {
         return servicesRepository.findAll();
     }
 
+    @Override
+    public Optional<MainOeuvre> findMO(String nom) {
+        return Optional.ofNullable(mainOeuvreRepository.findAllByNomContains(nom).orElse(null));
+    }
+
 
     //---------------------------------      DEMANDE DE DEVIS     -----------------------------------------\\
     @Override
@@ -631,10 +631,32 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public int countUsers() {
+        return appUserRepository.countusers();
+    }
+
+    @Override
+    public int countDevis() {
+        return devisRepository.countdevis();
+    }
+
+    @Override
+    public int coutServices() {
+        return servicesRepository.countservice() + mainOeuvreRepository.countMO();
+    }
+
+    @Override
+    public double getRevenue() {
+        return devisRepository.sumDevis();
+    }
+
+    @Override
     public List<AppUser> searchUser(String keyword) {
 
         return appUserRepository.userserchead(keyword);
     }
+
+
 
 
 }

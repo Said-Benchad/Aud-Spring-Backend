@@ -19,23 +19,15 @@ public class Devis {
     @Column(name = "codeDevis", updatable = false, nullable = false)
     private Long code_devis ;
     private String titre_devis;
-    private  String devisURL;
     @ManyToOne
-    private AppUser client;
-    @OneToOne
-    private StatusDevis statusDevis;
-    @ManyToOne
+    private AppUser appUser;
+   @ManyToOne
     private Voiture voiture;
-    @ManyToMany( fetch = FetchType.LAZY)
-    List<Employe> employes ;
-    private String description;
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateCreation;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateModif ;
-
    @ManyToMany
     private List<Services> services;
+   private double montant;
 
 
 }

@@ -13,6 +13,8 @@ public interface AppUserRepository extends JpaRepository<AppUser , Long> {
     Optional<AppUser> findFirstByUsername(String username);
     @Query("select a from AppUser a where a.username like %:kw%")
     List<AppUser> userserchead(@Param(value = "kw") String key);
+    @Query("select count(*) from AppUser a")
+    int countusers();
 
 }
 

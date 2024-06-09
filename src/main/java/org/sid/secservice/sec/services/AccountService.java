@@ -55,19 +55,21 @@ public interface AccountService {
     void addMoteurToVoiture(Moteur moteur , Voiture voiture);
     void addVoitureToDevis(Voiture voiture , Devis devis);
     void addVoitureToPack ( Long id, Packages pack);
-    void addEmployeToDevis (Employe employe , Devis devis);
+
     void addPieceToVoiture(Piece p , Voiture v );
     void addServiceToPack(Packages p , Revision r);
 
     void addVoitureToPService(Voiture voiture , PrixServices prixServices);
     void addSerToPServices(Services services , PrixServices prixSer);
     void CalcCout (Packages pack);
+    Prixmainouevre addNewPrixMain(Prixmainouevre prixmainouevre);
     PrixServices addNewPrixSer(PrixServices prixServices);
     Optional<Services> getService(Long id);
     Optional<Moteur> getMoteur (Long id);
     StatusDevis addNewStatusDevis ( StatusDevis statusDevis);
     List<Devis> listDevis();
     List<Services> listService();
+    Optional<MainOeuvre> findMO (String nom);
 
     //---------------------------------DEMANDE DE DEVIS---------------------------------------------------------------
     Voiture getVoiture(Moteur moteur , String modele);
@@ -82,7 +84,10 @@ public interface AccountService {
 
     List<Prixmainouevre> getPrixMainOeuvre();
     Services addservice( Revision revision);
-Services addservice(Reparation reparation);
-
+    Services addservice(Reparation reparation);
+    int countUsers();
+    int countDevis();
+    int coutServices();
+    double getRevenue();
     List<AppUser> searchUser(String keyword);
 }
